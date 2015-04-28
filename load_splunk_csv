@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+
+require 'csv'
+require 'pry'
+
+def first_non_empty_field row, *fields
+  fields.each do |field|
+    val = (row[field]||'').strip
+    return val unless val.empty?
+  end
+  return false
+end
+
+class LogEntry < Struct.new(:correlation_id,:underlying_csv_row)
+  def self.from_csv_row(row)
+    correlation_id = first_non_empty_field( row, 'Correlation_ID','tmps_correlation_id' ) || 'MISSING_CORRELATION_ID'
+    new(correlation_id,row)
+  end
+end
+
+CSV.new(ARGF, headers: true).each.with_index do |row,idx|
+  break if idx > 1000
+  log_entry = LogEntry.from_csv_row(row)
+  puts log_entry.correlation_id
+
+
+
+end
+       
