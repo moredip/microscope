@@ -1,0 +1,76 @@
+GET  /_search
+
+GET  /_search?q=message:as*
+
+GET logstash-2015.05.14/_search
+
+GET logstash-2015.05.14/_mapping
+
+GET logstash-2015.05.14/_search?q=host:("vagrant-ubuntu-trusty-64")
+
+GET foo3/_search
+
+GET logstash-2015.04.21/_search?q=Correlation_ID.raw:app11
+
+
+GET logstash-2015.04.21/_search
+{
+    "query" : {
+      "bool": {
+        "must_not": [
+          { "match": {
+            "Correlation_ID.raw": ""
+          }
+          }
+        ]
+      }
+    }
+}
+
+GET logstash-2015.04.21/_search?search_type=count
+{
+    "query" : {
+      "bool": {
+        "must_not": [
+          { "match": {
+            "Correlation_ID.raw": ""
+          }
+          }
+        ]
+      }
+    },
+    "aggs" : { 
+        "traces" : { 
+            "terms" : {
+              "field" : "Correlation_ID.raw",
+              "size" : 0
+            }
+        }
+    }
+}
+
+GET /logstash-2015.04.21/_search?search_type=count
+{
+      "query" : {
+      "bool": {
+        "must_not": [
+          { "match": {
+            "Correlation_ID.raw": ""
+          }
+          }
+        ]
+      }
+    },
+    "aggs" : {
+        "traces" : {
+            "cardinality" : {
+              "field" : "Correlation_ID"
+            }
+        }
+    }
+}
+
+
+GET /foo3/_mapping/logs/
+
+GET /_analyze?analyzer=standard&text=app24.tmol.ash1.websys.tmcs-59400042558a0a8d54de5b3f80cb7af9-VTU5LMCoOiEAAA-rgvwAAAJp-srcISM-offers
