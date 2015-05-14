@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require 'csv'
+
+CSV.new(ARGF, headers: true).each.with_index do |row,idx|
+  puts row['_raw']
+end
