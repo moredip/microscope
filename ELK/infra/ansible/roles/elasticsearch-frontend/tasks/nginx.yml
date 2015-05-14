@@ -1,0 +1,11 @@
+---
+- apt: update_cache=yes cache_valid_time=3600
+- apt: name=nginx state=present
+
+- file: state=absent path=/etc/nginx/sites-enabled/default
+
+- name: configure nginx as frontend to elasticsearch
+  template: src=es_frontend.j2 dest=/etc/nginx/sites-enabled/es_frontend owner=root group=root mode=0644
+  notify: restart nginx
+
+- service: name=nginx state=started enabled=yes

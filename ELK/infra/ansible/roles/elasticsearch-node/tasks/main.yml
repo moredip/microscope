@@ -1,0 +1,19 @@
+---
+- apt: update_cache=yes cache_valid_time=3600
+- apt: name=openjdk-7-jre-headless state=present
+
+- name: download elasticsearch .deb
+  get_url: url={{elasticsearch_deb_url}} dest={{elasticsearch_deb_local_path}}
+- name: install elasticsearch .deb
+  command: dpkg -i {{elasticsearch_deb_local_path}}
+
+- name: configure elasticsearch
+  template: src=elasticsearch.yml.j2 dest=/etc/elasticsearch/elasticsearch.yml owner=elasticsearch group=elasticsearch
+    
+- name: install marvel
+  shell: "/usr/share/elasticsearch/bin/plugin -i elasticsearch/marvel/latest"
+  when: install_marvel
+  args:
+    creates: "/usr/share/elasticsearch/plugins/marvel"
+
+- service: name=elasticsearch state=started enabled=yes

@@ -1,0 +1,11 @@
+---
+- name: download kopf tarball
+  get_url: url={{kopf_download_url}} dest={{kopf_tarball_path}}
+
+- file: state=directory path={{ kopf_dir }}  owner=www-data group=www-data
+
+- name: explode kopf tarball into {{ kopf_dir }}
+  shell: tar xvf {{ kopf_tarball_path }} --strip-components 1 
+  args:
+    chdir: "{{ kopf_dir }}"
+    creates: "{{ kopf_dir }}/index.html"

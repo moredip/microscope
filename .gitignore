@@ -1,5 +1,7 @@
-/.vagrant/
+.vagrant/
 /.bundle/
-/tmp/
+tmp/
 /sample-data/*
 Gemfile.lock
+
+/ELK/infra/managed_tools

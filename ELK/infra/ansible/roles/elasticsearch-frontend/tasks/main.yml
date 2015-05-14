@@ -1,0 +1,4 @@
+---
+- include: kopf.yml
+- include: kibana.yml
+- include: nginx.yml

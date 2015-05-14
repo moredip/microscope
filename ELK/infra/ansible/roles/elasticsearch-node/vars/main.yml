@@ -1,0 +1,4 @@
+---
+elasticsearch_version: 1.4.1
+elasticsearch_deb_url: https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-{{elasticsearch_version}}.deb
+elasticsearch_deb_local_path: /tmp/elasticsearch-{{elasticsearch_version}}.deb

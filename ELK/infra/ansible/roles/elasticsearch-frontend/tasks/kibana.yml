@@ -1,0 +1,17 @@
+---
+- name: download kibana tarball
+  get_url: url={{kibana_download_url}} dest={{kibana_tarball_path}}
+
+- file: state=directory path={{ kibana_dir | dirname }}  owner=www-data group=www-data
+
+- name: explode kibana tarball into {{ kibana_dir }}
+  shell: tar xvf {{ kibana_tarball_path }} && mv kibana-{{kibana_version}} {{ kibana_dir }}
+  args:
+    chdir: /tmp
+    creates: "{{ kibana_dir }}"
+
+- name: configure kibana
+  lineinfile: 
+    dest: "{{ kibana_dir }}/config.js"
+    regexp: '^\s+elasticsearch\:'
+    line: "    elasticsearch: window.location.protocol+'//'+window.location.host ,"

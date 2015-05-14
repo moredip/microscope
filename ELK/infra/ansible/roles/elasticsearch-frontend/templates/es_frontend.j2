@@ -1,0 +1,84 @@
+# based on:
+# https://www.digitalocean.com/community/tutorials/how-to-use-logstash-and-kibana-to-centralize-and-visualize-logs-on-ubuntu-14-04
+# http://www.elasticsearch.org/blog/playing-http-tricks-nginx/
+
+upstream elasticsearch {
+
+  {% for host in es_nodes %}
+    server {{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}:9200;
+  {% endfor %}
+
+  keepalive 15;
+}
+
+server {
+  listen 80;
+
+  location /admin {
+    alias  /var/www/kopf;
+    index  index.html  index.htm;
+  }
+
+  location /kibana {
+    alias  /var/www/kibana;
+    index  index.html  index.htm;
+  }
+  
+  location / {
+    proxy_pass http://elasticsearch;
+    proxy_read_timeout 90;
+    proxy_http_version 1.1;
+    proxy_set_header Connection "Keep-Alive";
+    proxy_set_header Proxy-Connection "Keep-Alive";
+  }
+
+  location ~ ^/_aliases$ {
+    proxy_pass http://elasticsearch;
+    proxy_read_timeout 90;
+    proxy_http_version 1.1;
+    proxy_set_header Connection "Keep-Alive";
+    proxy_set_header Proxy-Connection "Keep-Alive";
+  }
+  location ~ ^/.*/_aliases$ {
+    proxy_pass http://elasticsearch;
+    proxy_read_timeout 90;
+    proxy_http_version 1.1;
+    proxy_set_header Connection "Keep-Alive";
+    proxy_set_header Proxy-Connection "Keep-Alive";
+  }
+
+  location ~ ^/_cluster/.*$ {
+    proxy_pass http://elasticsearch;
+    limit_except GET {
+        deny all;
+    }
+    proxy_read_timeout 90;
+    proxy_http_version 1.1;
+    proxy_set_header Connection "Keep-Alive";
+    proxy_set_header Proxy-Connection "Keep-Alive";
+  }
+
+  location ~ ^/_nodes$ {
+    proxy_pass http://elasticsearch;
+    proxy_read_timeout 90;
+    proxy_http_version 1.1;
+    proxy_set_header Connection "Keep-Alive";
+    proxy_set_header Proxy-Connection "Keep-Alive";
+  }
+
+  location ~ ^/.*/_search$ {
+    proxy_pass http://elasticsearch;
+    proxy_read_timeout 90;
+    proxy_http_version 1.1;
+    proxy_set_header Connection "Keep-Alive";
+    proxy_set_header Proxy-Connection "Keep-Alive";
+  }
+
+  location ~ ^/.*/_mapping {
+    proxy_pass http://elasticsearch;
+    proxy_read_timeout 90;
+    proxy_http_version 1.1;
+    proxy_set_header Connection "Keep-Alive";
+    proxy_set_header Proxy-Connection "Keep-Alive";
+  }
+}

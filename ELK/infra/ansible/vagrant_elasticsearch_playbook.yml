@@ -1,0 +1,10 @@
+---
+- hosts: all
+  sudo: true
+  roles:
+    - role: "elasticsearch-node"
+      hosts: ["elasticsearch"]
+      node_name: Vagrant
+      install_marvel: true
+    - role: "elasticsearch-frontend"
+      es_nodes: ["elasticsearch"]

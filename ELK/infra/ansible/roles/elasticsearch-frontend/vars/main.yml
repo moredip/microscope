@@ -1,0 +1,10 @@
+---
+kibana_version: "3.0.1"
+kibana_download_url: https://download.elasticsearch.org/kibana/kibana/kibana-{{kibana_version}}.tar.gz
+kibana_tarball_path: /tmp/kibana-{{kibana_version}}.tar.gz
+kibana_dir: /var/www/kibana
+
+kopf_version: "1.3.8"
+kopf_download_url: https://github.com/lmenezes/elasticsearch-kopf/tarball/v{{ kopf_version }}
+kopf_tarball_path: /tmp/kopf-{{kopf_version}}.tar.gz
+kopf_dir: /var/www/kopf
