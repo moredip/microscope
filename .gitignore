@@ -1,2 +1,5 @@
 /.vagrant/
+/.bundle/
+/tmp/
 /sample-data/*
+Gemfile.lock
