@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'securerandom'
-require 'yaml'
+require 'time'
 
 SERVICES = [
   :alpha,
@@ -45,15 +45,21 @@ class Span
   end
 
   def generate_fake_log_lines(parent_span_id = "<NULL>")
-    # TODO: legit-looking timestamps
     # TODO: Correlation_ID
+    
     log_fields = {
       spanId: span_id,
       parentSpanId: parent_span_id,
       elapsedMillis: duration,
       service: service
     }
-    log_line = log_fields.map{ |k,v| "#{k}=#{v}" }.join(" ")
+    # TODO: legit-looking timestamps
+    timestamp = Time.now.iso8601
+
+    log_line = log_fields
+      .map{ |k,v| "#{k}=#{v}" }
+      .unshift(timestamp)
+      .join(" ")
     sub_span_log_lines = sub_spans.map{ |sub_span| sub_span.generate_fake_log_lines(span_id) }
     sub_span_log_lines + [log_line]
   end
@@ -128,16 +134,8 @@ def map_subtopology_to_subspan(service,sub_services)
   span
 end
 
-  
-# generate parent span
-# choose a random number of child spans between 0 and 5
-# for each child span
-#  - generate 
-# sum up child span durations, add X%, make that the parent span duration
-
-
 topology = generate_topology
 trace = generate_trace_for_topology(topology)
 
-puts trace.inspect
+#puts trace.inspect
 puts trace.generate_fake_log_lines.join("\n")
