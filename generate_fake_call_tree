@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'securerandom'
+require 'yaml'
 
 SERVICES = [
   :alpha,
@@ -9,7 +10,12 @@ SERVICES = [
   :delta,
   :echo,
   :foxtrot,
-  :gamma
+  :gamma,
+  :hawaii,
+  :indigo,
+  :julia,
+  :kilo,
+  :oscar
 ]
 
 class Span
@@ -52,7 +58,7 @@ def generate_sub_topology(available_services)
   return {} if available_services.empty?
 
   # choose a random number of child spans between 1 and 3
-  num_child_services = 1+rand(2)
+  num_child_services = 1+rand(3)
   child_services = remove_random_elements_from_array!(available_services,num_child_services)
 
   child_topology = {}
@@ -66,13 +72,16 @@ end
 
 def generate_topology
   available_services = SERVICES.dup
+  root_service = remove_random_elements_from_array!(available_services,1).first
+
+  {
+    root_service: generate_sub_topology(available_services)
+  }
 end
 
+puts generate_topology.to_yaml
 
   
-
-def generateParentSpan(SERVICES)
-  depth = 3
 # generate parent span
 # choose a random number of child spans between 0 and 5
 # for each child span
@@ -82,5 +91,3 @@ def generateParentSpan(SERVICES)
 
 
 
-
-puts 'asdf'
