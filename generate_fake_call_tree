@@ -25,7 +25,6 @@ class Span
   def initialize(service)
     @service = service
     @sub_spans = []
-
   end
 
   def uid
@@ -33,12 +32,30 @@ class Span
   end
 
   def duration
-    sub_span_durations = sub_spans.map(&:duration).reduce(:+)
-    sub_span_durations + duration_overhead_multiplier
+    if sub_spans.empty?
+      10+rand(200)
+    else
+      sub_span_durations = sub_spans.map(&:duration).reduce(:+)
+      (sub_span_durations * duration_overhead_multiplier).to_i
+    end
   end
 
   def add_sub_span(sub_span)
     @sub_spans << sub_span
+  end
+
+  def inspect(depth=0)
+    sub_span_desc = sub_spans.map do |sub_span|
+      sub_span.inspect(depth+1)
+    end
+    
+    lines = [
+      "#{service}: #{duration}",
+      sub_span_desc
+    ].flatten
+
+    indent = "  "*depth
+    lines.map{ |line| indent + line }.join("\n")
   end
 
   private
@@ -79,7 +96,23 @@ def generate_topology
   }
 end
 
-puts generate_topology.to_yaml
+
+def generate_trace_for_topology(topology)
+  raise 'badly structured topology' unless topology.size == 1
+
+  service = topology.keys.first
+  sub_services = topology.values.first
+  map_subtopology_to_subspan(service,sub_services)
+end
+
+def map_subtopology_to_subspan(service,sub_services)
+  span = Span.new(service)
+  sub_services.each do |sub_service,sub_sub_services|
+    sub_span = map_subtopology_to_subspan(sub_service,sub_sub_services)
+    span.add_sub_span(sub_span)
+  end
+  span
+end
 
   
 # generate parent span
@@ -89,5 +122,7 @@ puts generate_topology.to_yaml
 # sum up child span durations, add X%, make that the parent span duration
 
 
+topology = generate_topology
+trace = generate_trace_for_topology(topology)
 
-
+puts trace.inspect
