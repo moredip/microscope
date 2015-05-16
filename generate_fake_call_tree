@@ -44,10 +44,11 @@ class Span
     sub_spans << sub_span
   end
 
-  def generate_fake_log_lines(parent_span_id = "<NULL>")
+  def generate_fake_log_lines(trace_id=SecureRandom.uuid, parent_span_id = '')
     # TODO: Correlation_ID
     
     log_fields = {
+      traceId: trace_id,
       spanId: span_id,
       parentSpanId: parent_span_id,
       elapsedMillis: duration,
@@ -60,7 +61,7 @@ class Span
       .map{ |k,v| "#{k}=#{v}" }
       .unshift(timestamp)
       .join(" ")
-    sub_span_log_lines = sub_spans.map{ |sub_span| sub_span.generate_fake_log_lines(span_id) }
+    sub_span_log_lines = sub_spans.map{ |sub_span| sub_span.generate_fake_log_lines(trace_id,span_id) }
     sub_span_log_lines + [log_line]
   end
 
@@ -109,8 +110,6 @@ end
 
 def generate_topology
   available_services = SERVICES.dup
-  root_service = remove_random_elements_from_array!(available_services,1).first
-
   {
     root_service: generate_sub_topology(available_services)
   }
@@ -134,8 +133,11 @@ def map_subtopology_to_subspan(service,sub_services)
   span
 end
 
-topology = generate_topology
-trace = generate_trace_for_topology(topology)
+num_traces = ARGV.empty? ? 1 : (ARGV.first.to_i)
 
-#puts trace.inspect
-puts trace.generate_fake_log_lines.join("\n")
+topology = generate_topology
+
+num_traces.times do 
+  trace = generate_trace_for_topology(topology)
+  puts trace.generate_fake_log_lines.join("\n")
+end
