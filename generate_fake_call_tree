@@ -27,8 +27,8 @@ class Span
     @sub_spans = []
   end
 
-  def uid
-    @_uid ||= SecureRandom.uuid
+  def span_id
+    @_span_id ||= SecureRandom.uuid
   end
 
   def duration
@@ -41,7 +41,21 @@ class Span
   end
 
   def add_sub_span(sub_span)
-    @sub_spans << sub_span
+    sub_spans << sub_span
+  end
+
+  def generate_fake_log_lines(parent_span_id = "<NULL>")
+    # TODO: legit-looking timestamps
+    # TODO: Correlation_ID
+    log_fields = {
+      spanId: span_id,
+      parentSpanId: parent_span_id,
+      elapsedMillis: duration,
+      service: service
+    }
+    log_line = log_fields.map{ |k,v| "#{k}=#{v}" }.join(" ")
+    sub_span_log_lines = sub_spans.map{ |sub_span| sub_span.generate_fake_log_lines(span_id) }
+    sub_span_log_lines + [log_line]
   end
 
   def inspect(depth=0)
@@ -126,3 +140,4 @@ topology = generate_topology
 trace = generate_trace_for_topology(topology)
 
 puts trace.inspect
+puts trace.generate_fake_log_lines.join("\n")
