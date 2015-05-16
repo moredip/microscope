@@ -1,0 +1,86 @@
+#!/usr/bin/env ruby
+
+require 'securerandom'
+
+SERVICES = [
+  :alpha,
+  :bravo,
+  :charlie,
+  :delta,
+  :echo,
+  :foxtrot,
+  :gamma
+]
+
+class Span
+  attr_reader :service
+  attr_reader :sub_spans
+  
+  def initialize(service)
+    @service = service
+    @sub_spans = []
+
+  end
+
+  def uid
+    @_uid ||= SecureRandom.uuid
+  end
+
+  def duration
+    sub_span_durations = sub_spans.map(&:duration).reduce(:+)
+    sub_span_durations + duration_overhead_multiplier
+  end
+
+  def add_sub_span(sub_span)
+    @sub_spans << sub_span
+  end
+
+  private
+
+  def duration_overhead_multiplier
+    @_duration_overhead_multiplier ||= 1.0 + (rand(100).to_f/1000)
+  end
+end
+
+def remove_random_elements_from_array!(array,n)
+  elements = array.sample(n)
+  array.delete_if{ |x| elements.include?(x) }
+  elements
+end
+
+def generate_sub_topology(available_services)
+  return {} if available_services.empty?
+
+  # choose a random number of child spans between 1 and 3
+  num_child_services = 1+rand(2)
+  child_services = remove_random_elements_from_array!(available_services,num_child_services)
+
+  child_topology = {}
+  child_services.each do |child_service|
+    sub_topology = generate_sub_topology(available_services)
+    child_topology[child_service] = sub_topology
+  end
+
+  child_topology
+end  
+
+def generate_topology
+  available_services = SERVICES.dup
+end
+
+
+  
+
+def generateParentSpan(SERVICES)
+  depth = 3
+# generate parent span
+# choose a random number of child spans between 0 and 5
+# for each child span
+#  - generate 
+# sum up child span durations, add X%, make that the parent span duration
+
+
+
+
+
+puts 'asdf'
