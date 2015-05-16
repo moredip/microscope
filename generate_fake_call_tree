@@ -21,6 +21,8 @@ SERVICES = [
 class Span
   attr_reader :service
   attr_reader :sub_spans
+
+  INTERNAL_DURATION_RANGE = (10..200)
   
   def initialize(service)
     @service = service
@@ -33,10 +35,10 @@ class Span
 
   def duration
     if sub_spans.empty?
-      10+rand(200)
+      internal_duration
     else
       sub_span_durations = sub_spans.map(&:duration).reduce(:+)
-      (sub_span_durations * duration_overhead_multiplier).to_i
+      sub_span_durations + internal_duration
     end
   end
 
@@ -45,10 +47,8 @@ class Span
   end
 
   def generate_fake_log_lines(trace_id=SecureRandom.uuid, parent_span_id = '')
-    # TODO: Correlation_ID
-    
     log_fields = {
-      traceId: trace_id,
+      Correlation_ID: trace_id,
       spanId: span_id,
       parentSpanId: parent_span_id,
       elapsedMillis: duration,
@@ -80,9 +80,9 @@ class Span
   end
 
   private
-
-  def duration_overhead_multiplier
-    @_duration_overhead_multiplier ||= 1.0 + (rand(100).to_f/1000)
+  
+  def internal_duration
+    @_internal_duration ||= INTERNAL_DURATION_RANGE.begin+rand(INTERNAL_DURATION_RANGE.end)
   end
 end
 
