@@ -74,3 +74,30 @@ GET /logstash-2015.04.21/_search?search_type=count
 GET /foo3/_mapping/logs/
 
 GET /_analyze?analyzer=standard&text=app24.tmol.ash1.websys.tmcs-59400042558a0a8d54de5b3f80cb7af9-VTU5LMCoOiEAAA-rgvwAAAJp-srcISM-offers
+
+
+GET logstash-*/_search
+{
+    "query" : {
+      "bool": {
+        "must_not": [
+          { "match": {
+            "Correlation_ID.raw": ""
+          }
+          }
+        ]
+      }
+    },
+    "filter" : {
+      "bool": {
+        "must": [
+          {
+            "missing" : {"field":"parentSpanId" }
+          },
+          {
+            "exists" : {"field":"spanId"}
+          }
+        ]
+      }
+    }
+}

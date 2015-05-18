@@ -1,5 +1,4 @@
 var serviceName = window.location.search.substr(1);
-var searchUrl = "http://localhost:8081/_all/_search?size=500&q=Correlation_ID.raw:" + traceId;
 
 /* 
  
@@ -10,6 +9,17 @@ a list of available traces for a given service and response time range
 
 */
 
-$(function(){
-  window.alert('hai');
+ES.getRootTracesForService(serviceName).then(function(logEntries){
+  console.log('matching traces', logEntries);
+
+  var $listEntries = _.map(logEntries,function(logEntry){
+    var label = logEntry.service + " - " + logEntry.Correlation_ID;
+    var url = "trace.html?"+logEntry.Correlation_ID;
+    return $("<li/>").append(
+      $("<a/>").attr("href",url).text(label) 
+    );
+  });
+
+  $('.traces').append($listEntries);
+
 });
