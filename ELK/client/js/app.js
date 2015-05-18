@@ -77,7 +77,7 @@ function renderSpans(spans){
 
   var partition = d3.layout.partition()
     .sort( function(a,b){ return a.timestamp - b.timestamp; } )
-    .size([2 * Math.PI, 500 * 500]);
+    .size([2 * Math.PI, 300 * 300]);
 
   var partitioned = partition(findRootSpan(spans));
 
@@ -99,7 +99,7 @@ function renderSpans(spans){
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
-      .attr("transform", "translate(" + (margin.left+500) + "," + (margin.top+500) + ")");
+      .attr("transform", "translate(" + (margin.left+300) + "," + (margin.top+300) + ")");
 
   var span = svg.append("g").selectAll(".span")
     .data(partitioned)

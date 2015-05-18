@@ -22,7 +22,7 @@ class Span
   attr_reader :service
   attr_reader :sub_spans
 
-  INTERNAL_DURATION_RANGE = (10..200)
+  INTERNAL_DURATION_RANGE = (50..300)
   
   def initialize(service)
     @service = service
@@ -42,11 +42,30 @@ class Span
     end
   end
 
+  def responseTime(requestTime)
+    requestTime + (duration.to_f/1000)
+  end
+
+  def external_duration
+    return 0 if sub_spans.empty?
+
+    child_durations = sub_spans.map(&:duration)
+    if child_spans_are_parallel
+      child_durations.max
+    else
+      child_durations.reduce(:+)
+    end
+  end
+
+  def child_spans_are_parallel
+    @_child_spans_are_parallel ||= (rand(2) == 0)
+  end
+
   def add_sub_span(sub_span)
     sub_spans << sub_span
   end
 
-  def generate_fake_log_lines(trace_id=SecureRandom.uuid, parent_span_id = '')
+  def generate_fake_log_lines(trace_id=SecureRandom.uuid, parent_span_id = '',requestTime = Time.now)
     log_fields = {
       Correlation_ID: trace_id,
       spanId: span_id,
@@ -54,14 +73,21 @@ class Span
       elapsedMillis: duration,
       service: service
     }
-    # TODO: legit-looking timestamps
-    timestamp = Time.now.iso8601
 
     log_line = log_fields
       .map{ |k,v| "#{k}=#{v}" }
-      .unshift(timestamp)
+      .unshift(responseTime(requestTime).iso8601(5))
       .join(" ")
-    sub_span_log_lines = sub_spans.map{ |sub_span| sub_span.generate_fake_log_lines(trace_id,span_id) }
+
+
+    sub_span_log_lines = sub_spans.map do |sub_span| 
+      log_lines = sub_span.generate_fake_log_lines(trace_id,span_id,requestTime)
+      if !child_spans_are_parallel
+        requestTime = sub_span.responseTime(requestTime)
+      end
+      log_lines
+    end
+
     sub_span_log_lines + [log_line]
   end
 
