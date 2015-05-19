@@ -15,12 +15,16 @@ SERVICES = [
   :indigo,
   :julia,
   :kilo,
+  :lemur,
+  :milan,
+  :noise,
   :oscar
 ]
 
 class Span
   attr_reader :service
   attr_reader :sub_spans
+  attr_reader :start_time
 
   INTERNAL_DURATION_RANGE = (50..300)
   
@@ -42,8 +46,8 @@ class Span
     end
   end
 
-  def responseTime(requestTime)
-    requestTime + (duration.to_f/1000)
+  def end_time
+    start_time + (duration.to_f/1000)
   end
 
   def external_duration
@@ -65,7 +69,24 @@ class Span
     sub_spans << sub_span
   end
 
-  def generate_fake_log_lines(trace_id=SecureRandom.uuid, parent_span_id = '',requestTime = Time.now)
+  def build_start_times(start_time)
+    @start_time = start_time
+
+    #puts service.to_s + ": " + sub_spans.map(&:service).join(", ")
+    sub_spans.inject(start_time) do |sub_span_start_time,sub_span|
+
+      sub_span.build_start_times(sub_span_start_time)
+      #puts "#{sub_span.service} #{sub_span.start_time.to_i} -> #{sub_span.end_time.to_i}"
+
+      if child_spans_are_parallel
+        sub_span_start_time
+      else
+        sub_span.end_time
+      end
+    end
+  end
+
+  def generate_fake_log_lines(trace_id=SecureRandom.uuid, parent_span_id = '')
     log_fields = {
       Correlation_ID: trace_id,
       spanId: span_id,
@@ -76,16 +97,12 @@ class Span
 
     log_line = log_fields
       .map{ |k,v| "#{k}=#{v}" }
-      .unshift(responseTime(requestTime).iso8601(5))
+      .unshift(end_time.iso8601(5))
       .join(" ")
 
 
     sub_span_log_lines = sub_spans.map do |sub_span| 
-      log_lines = sub_span.generate_fake_log_lines(trace_id,span_id,requestTime)
-      if !child_spans_are_parallel
-        requestTime = sub_span.responseTime(requestTime)
-      end
-      log_lines
+      sub_span.generate_fake_log_lines(trace_id,span_id)
     end
 
     sub_span_log_lines + [log_line]
@@ -108,7 +125,7 @@ class Span
   private
   
   def internal_duration
-    @_internal_duration ||= INTERNAL_DURATION_RANGE.begin+rand(INTERNAL_DURATION_RANGE.end)
+    @_internal_duration ||= (INTERNAL_DURATION_RANGE.begin+rand(INTERNAL_DURATION_RANGE.end))
   end
 end
 
@@ -122,7 +139,7 @@ def generate_sub_topology(available_services)
   return {} if available_services.empty?
 
   # choose a random number of child spans between 1 and 3
-  num_child_services = 1+rand(3)
+  num_child_services = 0+rand(3)
   child_services = remove_random_elements_from_array!(available_services,num_child_services)
 
   child_topology = {}
@@ -161,9 +178,12 @@ end
 
 num_traces = ARGV.empty? ? 1 : (ARGV.first.to_i)
 
-topology = generate_topology
 
 num_traces.times do 
+  topology = generate_topology
+  #require 'yaml'
+  #puts topology.to_yaml
   trace = generate_trace_for_topology(topology)
+  trace.build_start_times(Time.now)
   puts trace.generate_fake_log_lines.join("\n")
 end
