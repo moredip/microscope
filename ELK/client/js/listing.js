@@ -1,22 +1,34 @@
-var serviceName = window.location.search.substr(1);
+var _ = require('underscore'),
+    ES = require('./es');
+
 
 // STILL TO BE DONE: filter by time range, filter by elapsed millis
 
-ES.getRootTracesForService(serviceName).then(function(logEntries){
-  // console.log(logEntries[0]);
 
-  $(".headline").text("traces starting with "+serviceName);
- 
-  var $listEntries = _.map(logEntries,function(logEntry){
-    var millis = ""+logEntry.elapsedMillis+"ms";
-    var timestamp = logEntry['@timestamp'];
-    var url = "trace.html?"+logEntry.Correlation_ID;
+var AppComponent = React.createClass({
+  render: function(){
+    var traces = _.map(this.props.traceRoots,function(traceRoot){
+      var millis = ""+traceRoot.elapsedMillis+"ms";
+      var timestamp = traceRoot['@timestamp'];
+      var url = "trace.html?"+traceRoot.Correlation_ID;
+      return <li>
+          <a href={url}>{timestamp}</a>
+          <span>[{millis}]</span>
+        </li>;
+    });
+    
+    return <div>
+        <h1>traces starting with {this.props.serviceName}</h1>
+        <ul>{traces}</ul>
+      </div>;
+  }
+});
 
-    return $("<li/>").append(
-      $("<a/>").attr("href",url).text(timestamp),
-      $("<span/>").text(" ["+millis+"]")
-    );
-  });
+var serviceName = window.location.search.substr(1);
 
-  $('.traces').append($listEntries);
+ES.getRootTracesForService(serviceName).then(function(traceRoots){
+  React.render(
+      <AppComponent serviceName={serviceName} traceRoots={traceRoots}/>,
+      document.getElementById('appContainer')
+  );
 });

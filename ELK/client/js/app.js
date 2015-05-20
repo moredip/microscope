@@ -1,3 +1,6 @@
+var _ = require('underscore'),
+    ES = require('./es');
+
 function traversedSpans(rootSpan){
   var spans = [];
   ES.visitSpanTreeDepthFirstPreOrder(rootSpan, function(span){
@@ -6,13 +9,22 @@ function traversedSpans(rootSpan){
   return spans;
 }
 
-var WaterfallLine = React.createFactory(React.createClass({
-  render: function() {
-    return React.DOM;
+var WaterfallLine = React.createClass({
+  render: function(){
+    var props=this.props;
+    return <g transform={"translate("+props.x+","+props.y+")"}>
+          <rect 
+            height={props.dy}
+            width={props.dx}
+            fill={props.color}
+            style={{stroke:d3.rgb(props.color).darker(2)}}
+          />
+          <text x="1em" dy={props.dy/2} textAnchor="left">{props.name}</text>
+    </g>
   }
-}));
+});
 
-var WaterfallChart = React.createFactory(React.createClass({
+var WaterfallChart = React.createClass({
   getDefaultProps: function(){
     var margin = {top: 1, right: 1, bottom: 6, left: 1};
     return {
@@ -40,21 +52,14 @@ var WaterfallChart = React.createFactory(React.createClass({
     var baseTimeOffset = rootSpan.startTime;
 
     return _.map(sequencedSpans,function(span,ix){
-      return React.DOM.g( {
-        transform: "translate(" + x(5+span.startTime-baseTimeOffset) + "," + (ix*rowHeightWithPadding) + ")"
-      },
-        React.DOM.rect({
-          height: props.rowHeight,
-          width: x(span.elapsedMillis),
-          fill: span.color = color(span.name.replace(/ .*/, "")),
-          style: {stroke: d3.rgb(span.color).darker(2)}
-        }),
-        React.DOM.text({
-          x: "1em",
-          dy: props.rowHeight/2,
-          "text-anchor": "left"
-        }, span.name )
-      );
+      return <WaterfallLine
+                name={span.name}
+                dx={x(span.elapsedMillis)}
+                dy={props.rowHeight}
+                x={x(5+span.startTime-baseTimeOffset)}
+                y={ix*rowHeightWithPadding}
+                color={color(span.name.replace(/ .*/, ""))}
+                />
     });
   },
 
@@ -72,12 +77,12 @@ var WaterfallChart = React.createFactory(React.createClass({
       )
     );
   }
-}));
+});
 
 function renderTraceSpanTree(spans){
   React.render(
-      WaterfallChart({spans:spans}),
-      document.getElementById('chart')
+      <WaterfallChart spans={spans}/>,
+      document.getElementById('appContainer')
   );
 }
 

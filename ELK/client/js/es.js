@@ -1,4 +1,14 @@
-window.ES = (function($){
+require("whatwg-fetch"); // installed as a global
+
+var _ = require('underscore');
+
+module.exports = {
+  getRootTracesForService: getRootTracesForService,
+  getConstructedTrace: getConstructedTrace,
+  findRootSpan: findRootSpan,
+  visitSpanTreeDepthFirstPreOrder: visitSpanTreeDepthFirstPreOrder
+};
+
 
 function extractLogEntriesFromSearchResponse(response){
   return _.pluck( response.hits.hits, "_source" );
@@ -7,12 +17,10 @@ function extractLogEntriesFromSearchResponse(response){
 function performSearch(searchBody){
   var searchUrl = "http://localhost:8081/logstash-*/_search";
 
-  return $.ajax({
-    url: searchUrl,
-    data: JSON.stringify(searchBody),
-    type: 'POST',
-    processData: false
-  });
+  return fetch(searchUrl,{
+    method: 'post',
+    body: JSON.stringify(searchBody)
+  }).then(function(r){ return r.json(); }); // TODO: handle errors
 }
 
 function getRootTracesForService(serviceName){
@@ -139,12 +147,3 @@ function getConstructedTrace(correlationId){
     .then(extractLogEntriesFromSearchResponse)
     .then(transformLogEntriesIntoSpanTree);
 }
-
-return {
-  getRootTracesForService: getRootTracesForService,
-  getConstructedTrace: getConstructedTrace,
-  findRootSpan: findRootSpan,
-  visitSpanTreeDepthFirstPreOrder: visitSpanTreeDepthFirstPreOrder
-};
-
-}($));
