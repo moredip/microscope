@@ -43,7 +43,7 @@ var WaterfallLine = React.createClass({
     }else{
       prefix = "[+] ";
     }
-    return prefix + this.props.name;
+    return prefix + this.props.name + " [" +this.props.elapsedMillis+"ms]";
   },
   render: function(){
     var props=this.props;
@@ -100,6 +100,7 @@ var WaterfallChart = React.createClass({
 
                 spanId={span.spanId}
                 name={span.name}
+                elapsedMillis={span.elapsedMillis}
                 expandChildren={span.expandChildren}
                 hasChildren={_.isEmpty(span.children)}
                 highlighted={span.highlighted}
