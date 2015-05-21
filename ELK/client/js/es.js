@@ -77,9 +77,23 @@ function allSpans(rootSpan){
 }
 
 function visitSpanTreeDepthFirstPreOrder(spanTreeRoot,visitorFn){
-  visitorFn(spanTreeRoot);
+  var bailOut = visitorFn(spanTreeRoot);
+  if( bailOut === false ) return;
+
   _.each( spanTreeRoot.children, function(childSpan){ 
     visitSpanTreeDepthFirstPreOrder(childSpan,visitorFn);
+  });
+}
+
+function enhanceSpanProperties(span){
+  var endTime = Date.parse(span.time);
+  var elapsedMillis = +span.elapsedMillis;
+
+  _.extend( span, {
+    elapsedMillis: elapsedMillis,
+    endTime: endTime,
+    startTime: endTime - elapsedMillis,
+    name: span.service
   });
 }
 
@@ -87,10 +101,7 @@ function decorateSpansWithParentChildLinks(spans){
   var spanMap = _.indexBy(spans,'spanId');
 
   _.each( spans, function(span){
-    span.elapsedMillis = +span.elapsedMillis;
-    span.endTime = Date.parse(span.time);
-    span.startTime = span.endTime - span.elapsedMillis;
-    span.name = span.service
+    enhanceSpanProperties(span);
 
     if( span.parentSpanId ){
       span.parentSpan = spanMap[span.parentSpanId];
