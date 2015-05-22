@@ -14,6 +14,14 @@ function extractLogEntriesFromSearchResponse(response){
   return _.pluck( response.hits.hits, "_source" );
 }
 
+function extractHistogramFromSearchResponse(response,aggName){
+  var buckets = {};
+  _.each( response.aggregations[aggName].buckets, function(bucket){
+    buckets[bucket.key] = bucket.doc_count
+  });
+  return buckets;
+}
+
 function performSearch(searchBody){
   var searchUrl = "http://localhost:8081/logstash-*/_search";
 
@@ -30,34 +38,46 @@ function performSearch(searchBody){
 //- bucket by span id where service-name AND parent span id is empty (e.g. into traces)
 //- histogram of elapsedMillis. x is count
 
-function getServiceProfile(serviceName){
-}
-
 function getRootTracesForService(serviceName){
   var searchBody = {
-    "size" : 500,
-    "filter" : {
-      "bool": {
-        "must": [
+    size: 500,
+    filter: {
+      bool: {
+        must: [
           {
-            "term": { "service.raw":serviceName }
+            term: { "service.raw":serviceName }
           },
           {
-            "exists" : {"field":"Correlation_ID"}
+            exists: {"field":"Correlation_ID"}
           },
           {
-            "missing" : {"field":"parentSpanId" }
+            missing: {"field":"parentSpanId" }
           },
           {
-            "exists" : {"field":"spanId"}
+            exists: {"field":"spanId"}
           }
         ]
+      }
+    },
+    aggs: { 
+      elapsedMillis: {
+        histogram: {
+          field: "elapsedMillis",
+          interval:"20"
+        }
       }
     }
   };
 
   return performSearch(searchBody)
-    .then(extractLogEntriesFromSearchResponse);
+    .then(function(response){
+      var spans = extractLogEntriesFromSearchResponse(response);
+      var histogram = extractHistogramFromSearchResponse(response,"elapsedMillis");
+      return {
+        spans:spans,
+        histogram:histogram
+      };
+    });
 }
 
 function findRootSpan(spans){
