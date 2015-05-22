@@ -17,7 +17,7 @@ function extractLogEntriesFromSearchResponse(response){
 function extractHistogramFromSearchResponse(response,aggName){
   var buckets = {};
   _.each( response.aggregations[aggName].buckets, function(bucket){
-    buckets[bucket.key] = bucket.doc_count
+    buckets[+bucket.key] = bucket.doc_count
   });
   return buckets;
 }
@@ -63,7 +63,7 @@ function getRootTracesForService(serviceName){
       elapsedMillis: {
         histogram: {
           field: "elapsedMillis",
-          interval:"20"
+          interval:"40"
         }
       }
     }

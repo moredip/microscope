@@ -5,31 +5,74 @@ var _ = require('underscore'),
 // STILL TO BE DONE: filter by time range, filter by elapsed millis
 
 var Histogram = React.createClass({
-  render: function(){
+
+  dims: function(){
+    var margin = {top: 5, right: 10, bottom: 20, left: 10},
+        full = {width:this.props.width,height:this.props.height},
+        inner = {
+          width:(full.width - margin.left - margin.right),
+          height:(full.height - margin.top - margin.bottom)
+        };
+
+    return { margin:margin,full:full,inner:inner };
+  },
+
+  scales: function(){
+    var dims = this.dims();
     var props = this.props;
     var countBuckets = props.data;
-
-    var y = d3.scale.linear()
-      .domain([0, d3.max(_.values(countBuckets))])
-        .range([props.height,0]);
+    var buckets = _.map(_.keys(countBuckets),parseFloat);
 
     var x = d3.scale.ordinal()
-      .domain(_.keys(countBuckets))
-      .rangeRoundBands([0, props.width]);
+      .domain(buckets)
+      .rangeRoundBands([dims.margin.left, dims.inner.width]);
+
+    var xAxis = d3.scale.linear()
+      .domain([ _.min(buckets), _.max(buckets) ])
+      .range([dims.margin.left, dims.inner.width]);
+
+    var y = d3.scale.linear()
+      .domain([0, _.max(countBuckets)])
+        .range([dims.inner.height,dims.margin.top]);
+
+    return {x:x,xAxis:xAxis,y:y};
+  },
+
+  generateXAxis: function(){
+    var xAxis = d3.svg.axis()
+      .scale(this.scales().xAxis)
+      .ticks(10)
+      .tickFormat(function(d){ return ""+d+"ms"; })
+      .orient("bottom");
+
+    xAxis(d3.select(this.getDOMNode()).select('.x.axis'));
+  },
+
+  componentDidMount: function(){
+    this.generateXAxis();
+  },
+
+  render: function(){
+    var dims = this.dims();
+    var props = this.props;
+    var countBuckets = props.data;
+    var scales = this.scales();
 
     var bars = _.map( props.data, function(count,bucket){
-      var transform = "translate("+x(+bucket)+","+y(+count)+")";
-      return <g className="bar" transform={transform}>
+      var transform = "translate("+scales.x(+bucket)+","+scales.y(count)+")";
+      return <g className="bar" transform={transform} data-bucket={bucket} data-count={count}>
         <rect 
           x="1" 
-          width={x.rangeBand()} 
-          height={props.height-y(count)}
+          width={scales.x.rangeBand()} 
+          height={dims.inner.height-scales.y(count)}
         >
          </rect>
       </g>;
     });
-
-    return <svg width={props.width} height={props.height}>
+    
+    // x axis part is filled out by componentDidUpdate
+    return <svg width={dims.full.width} height={dims.full.height}>
+      <g className="x axis" transform={"translate(0,"+dims.inner.height+")"}></g> 
       {bars}
     </svg>;
 
