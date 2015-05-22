@@ -23,27 +23,28 @@ function performSearch(searchBody){
   }).then(function(r){ return r.json(); }); // TODO: handle errors
 }
 
+
+//# Service profile: response time distribution
+//a histogram summarizing the distributions of response time for a given service
+//- for a given timerange, service-name
+//- bucket by span id where service-name AND parent span id is empty (e.g. into traces)
+//- histogram of elapsedMillis. x is count
+
+function getServiceProfile(serviceName){
+}
+
 function getRootTracesForService(serviceName){
   var searchBody = {
     "size" : 500,
-    "query" : {
-      "bool": {
-        "must_not": [
-          { "match": {
-            "Correlation_ID.raw": ""
-          }
-          }
-        ],
-        "must": [
-          {
-            "match": { "service.raw":serviceName }
-          }
-        ]
-      }
-    },
     "filter" : {
       "bool": {
         "must": [
+          {
+            "term": { "service.raw":serviceName }
+          },
+          {
+            "exists" : {"field":"Correlation_ID"}
+          },
           {
             "missing" : {"field":"parentSpanId" }
           },
