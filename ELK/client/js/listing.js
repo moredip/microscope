@@ -1,6 +1,9 @@
 var _ = require('underscore'),
     ES = require('./es');
 
+function translationTransform(x,y){
+  return "translate("+x+","+y+")";
+}
 
 // STILL TO BE DONE: filter by time range, filter by elapsed millis
 
@@ -27,7 +30,7 @@ var Histogram = React.createClass({
       .domain(buckets)
       .rangeRoundBands([dims.margin.left, dims.inner.width]);
 
-    var xAxis = d3.scale.linear()
+    var xLinear = d3.scale.linear()
       .domain([ _.min(buckets), _.max(buckets) ])
       .range([dims.margin.left, dims.inner.width]);
 
@@ -35,12 +38,12 @@ var Histogram = React.createClass({
       .domain([0, _.max(countBuckets)])
         .range([dims.inner.height,dims.margin.top]);
 
-    return {x:x,xAxis:xAxis,y:y};
+    return {x:x,xLinear:xLinear,y:y};
   },
 
   generateXAxis: function(){
     var xAxis = d3.svg.axis()
-      .scale(this.scales().xAxis)
+      .scale(this.scales().xLinear)
       .ticks(10)
       .tickFormat(function(d){ return ""+d+"ms"; })
       .orient("bottom");
@@ -58,21 +61,40 @@ var Histogram = React.createClass({
     var countBuckets = props.data;
     var scales = this.scales();
 
+
+    var selectionRange = [1000,2350];
+
+    var x = scales.xLinear(selectionRange[1])-scales.xLinear(selectionRange[0])
+    var selection = <rect x={scales.xLinear(selectionRange[0])}
+        y={2}
+        width={x}
+        height={dims.inner.height-2}
+        className="bar"
+      >
+        <foo></foo>
+      </rect>;
+
+
     var bars = _.map( props.data, function(count,bucket){
-      var transform = "translate("+scales.x(+bucket)+","+scales.y(count)+")";
-      return <g className="bar" transform={transform} data-bucket={bucket} data-count={count}>
-        <rect 
-          x="1" 
-          width={scales.x.rangeBand()} 
-          height={dims.inner.height-scales.y(count)}
+      return <g 
+          className="bar" 
+          transform={translationTransform(scales.x(+bucket),scales.y(count))} 
+          data-bucket={bucket} 
+          data-count={count}
         >
+          <rect 
+            x="1" 
+            width={scales.x.rangeBand()} 
+            height={dims.inner.height-scales.y(count)}
+          >
          </rect>
       </g>;
     });
     
     // x axis part is filled out by componentDidUpdate
     return <svg width={dims.full.width} height={dims.full.height}>
-      <g className="x axis" transform={"translate(0,"+dims.inner.height+")"}></g> 
+      {selection}
+      <g className="x axis" transform={translationTransform(0,dims.inner.height)}></g> 
       {bars}
     </svg>;
 
