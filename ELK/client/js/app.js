@@ -56,7 +56,7 @@ var WaterfallLine = React.createClass({
             width={props.dx}
             className={cx({'waterfall-line':true, highlighted:props.highlighted})}
           />
-          <text x="1em" dy={props.dy/2} textAnchor="left">{this.label()}</text>
+          <text y="4" x="6" dy={props.dy/2} textAnchor="left">{this.label()}</text>
     </g>
   }
 });
@@ -68,7 +68,7 @@ var WaterfallChart = React.createClass({
       margin: margin,
       width: 960 - margin.left - margin.right,
       height: 800 - margin.top - margin.bottom,
-      rowHeight: 30,
+      rowHeight: 25,
       rowVertPadding: 5
     };
   },

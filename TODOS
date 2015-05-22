@@ -1,0 +1,12 @@
+- deeper shades of a span color based on call stack depth
+- highlight both parents and children on hover
+- better laid out label
+- can't highlight label
+- timeline axis
+- animated expand/contract of subtrees
+
+- drill-down histograms
+
+- use elasticsearch npm module
+
+- show both latency and overhead
