@@ -32,13 +32,7 @@ function performSearch(searchBody){
 }
 
 
-//# Service profile: response time distribution
-//a histogram summarizing the distributions of response time for a given service
-//- for a given timerange, service-name
-//- bucket by span id where service-name AND parent span id is empty (e.g. into traces)
-//- histogram of elapsedMillis. x is count
-
-function getRootTracesForService(serviceName){
+function getRootTracesForService(serviceName,elapsedMillisClip){
   var searchBody = {
     size: 500,
     filter: {
@@ -68,6 +62,17 @@ function getRootTracesForService(serviceName){
       }
     }
   };
+
+  if( elapsedMillisClip ){
+    searchBody.filter.bool.must.push({
+      range: { 
+        elapsedMillis: {
+          gte: elapsedMillisClip[0],
+          lte: elapsedMillisClip[1]
+        }
+      }
+    });
+  }
 
   return performSearch(searchBody)
     .then(function(response){
