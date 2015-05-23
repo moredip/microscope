@@ -15,7 +15,7 @@ var AppComponent = React.createClass({
     });
     
     return <div>
-        <h1>traces starting with {this.props.serviceName}</h1>
+        <h1>traces involving <em>{this.props.serviceName}</em></h1>
         <DurationHistogram onSelectionChanged={this.props.onHistogramSelectionChanged} width={500} height={200} data={this.props.histogram}/>
         <ul>{traces}</ul>
       </div>;
@@ -29,7 +29,7 @@ function handleHistogramSelectionChange(selectionRange){
 }
 
 function refresh(serviceName,elapsedMillisClip){
-  ES.getRootTracesForService(serviceName,elapsedMillisClip).then(function(result){
+  ES.getAllTracesInvolvingService(serviceName,elapsedMillisClip).then(function(result){
     React.render(
         <AppComponent onHistogramSelectionChanged={handleHistogramSelectionChange} serviceName={serviceName} traceRoots={result.spans} histogram={result.histogram}/>,
         document.getElementById('appContainer')

@@ -3,8 +3,9 @@ require("whatwg-fetch"); // installed as a global
 var _ = require('underscore');
 
 module.exports = {
-  getRootTracesForService: getRootTracesForService,
+  getAllTracesInvolvingService: getAllTracesInvolvingService,
   getConstructedTrace: getConstructedTrace,
+  getServicesSummary:getServicesSummary,
   findRootSpan: findRootSpan,
   visitSpanTreeDepthFirstPreOrder: visitSpanTreeDepthFirstPreOrder
 };
@@ -22,8 +23,25 @@ function extractHistogramFromSearchResponse(response,aggName){
   return buckets;
 }
 
-function performSearch(searchBody){
+function extractStatsFromSearchResponse(response){
+  var buckets = {};
+  _.each( response.aggregations.service.buckets, function(bucket){
+    buckets[bucket.key] = {
+      service: bucket.key,
+      count: bucket.doc_count,
+      percentile99: bucket.duration_percentiles.values["99.0"],
+      mean: bucket.duration_stats.avg
+    };
+  });
+  return buckets;
+}
+
+function performSearch(searchBody,noHits){
   var searchUrl = "http://localhost:8081/logstash-*/_search";
+
+  if( noHits ){
+    searchUrl += "?search_type=count";
+  }
 
   return fetch(searchUrl,{
     method: 'post',
@@ -31,26 +49,57 @@ function performSearch(searchBody){
   }).then(function(r){ return r.json(); }); // TODO: handle errors
 }
 
+function getServicesSummary(){
+  var searchBody = {
+    "aggs": {
+      "service": {
+        "terms": {
+          "field": "service"
+        },
+        "aggs": { 
+          "duration_stats": { 
+            "extended_stats": {
+              "field": "elapsedMillis"
+            }
+          },
+          "duration_percentiles": { 
+            "percentiles": {
+              "field": "elapsedMillis",
+              "percents" : [99]
+            }
+          }
+        }
+      }
+    }
+  };
 
-function getRootTracesForService(serviceName,elapsedMillisClip){
+  return performSearch(searchBody,true)
+    .then(function(response){
+      return extractStatsFromSearchResponse(response);
+    });
+}
+
+
+function getAllTracesInvolvingService(serviceName,elapsedMillisClip){
   var searchBody = {
     size: 500,
-    filter: {
-      bool: {
-        must: [
-          {
-            term: { "service.raw":serviceName }
-          },
-          {
-            exists: {"field":"Correlation_ID"}
-          },
-          {
-            missing: {"field":"parentSpanId" }
-          },
-          {
-            exists: {"field":"spanId"}
+    query: { 
+      filtered: {
+        filter: {
+          bool: {
+            must: [
+              {
+                term: { "service.raw":serviceName }
+              },
+              {
+                exists: {"field":"Correlation_ID"}
+              },
+              {
+                exists: {"field":"spanId"}
+              }
+            ]
           }
-        ]
+        }
       }
     },
     aggs: { 
@@ -64,14 +113,14 @@ function getRootTracesForService(serviceName,elapsedMillisClip){
   };
 
   if( elapsedMillisClip ){
-    searchBody.filter.bool.must.push({
+    searchBody.filter = {
       range: { 
         elapsedMillis: {
           gte: elapsedMillisClip[0],
           lte: elapsedMillisClip[1]
         }
       }
-    });
+    };
   }
 
   return performSearch(searchBody)

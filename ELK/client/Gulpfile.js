@@ -10,7 +10,7 @@ function logError(err) {
  
 gulp.task('build', function () {
 
-  ["traceDetail.js","listing.js"].forEach( function(entryFile){
+  ["servicesOverview.js","traceDetail.js","listing.js"].forEach( function(entryFile){
     browserify({
       entries: ['./js/'+entryFile],
       transform: [reactify],
