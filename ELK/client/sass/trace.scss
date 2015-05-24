@@ -1,0 +1,10 @@
+@import "base";
+
+.waterfall-line {
+  fill: $c-sea;
+  stroke: darken($c-sea,30%);
+}
+.waterfall-line.highlighted {
+  fill: $c-blue;
+  stroke: darken($c-blue,20%);
+}

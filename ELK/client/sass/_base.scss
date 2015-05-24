@@ -1,0 +1,8 @@
+@import "bourbon";
+
+@import "colors";
+
+svg {
+  font: 10px sans-serif;
+  @include user-select(none);
+}

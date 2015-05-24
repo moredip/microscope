@@ -1,11 +1,13 @@
 {
   "devDependencies": {
+    "browserify": "~10.2.0",
     "gulp": "~3.8.11",
     "gulp-react": "~3.0.1",
+    "gulp-sass": "^2.0.1",
+    "node-bourbon": "^4.2.2",
     "reactify": "~1.1.1",
-    "watchify": "~3.2.1",
-    "browserify": "~10.2.0",
-    "vinyl-source-stream": "~1.1.0"
+    "vinyl-source-stream": "~1.1.0",
+    "watchify": "~3.2.1"
   },
   "dependencies": {
     "whatwg-fetch": "~0.8.2",

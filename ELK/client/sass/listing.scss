@@ -1,0 +1,26 @@
+@import "base";
+
+.bar {
+  fill: $c-teal;
+  stroke: darken($c-teal,5%);
+  opacity: .8;
+}
+
+.histogram {
+  cursor: col-resize; 
+}
+
+.histogram-selection {
+  fill: $c-pink;
+}
+
+.histogram-marker {
+  stroke: $c-pink;
+  stroke-width: 1;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: black;
+  shape-rendering: crispEdges;
+}
