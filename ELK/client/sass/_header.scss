@@ -1,0 +1,31 @@
+$navigation-height: 40px;
+$navigation-padding: 1em;
+
+header {
+  @include clearfix;
+  @include outer-container;
+
+  position: relative;
+  z-index: 9999;
+
+  padding-top: 5px;
+  padding-bottom: 5px;
+
+  background-color: $c-sea;
+  
+  .logo {
+    float: left;
+    /*padding-left: $navigation-padding;*/
+    /*padding-right: 2em;*/
+    max-height: $navigation-height;
+  }
+}
+
+footer {
+  .credits {
+    font-style: italic;
+    text-align: right;
+    color: #aaa;
+    a { color: inherit; }
+  }
+}

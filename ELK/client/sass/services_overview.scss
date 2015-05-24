@@ -1,0 +1,27 @@
+@import "base";
+
+
+.service-summary {
+  margin-top: 1em;
+  margin-bottom: 2em;
+
+  h2 { 
+    padding-left: 1em;
+  }
+
+  ul { 
+    list-style-type: none; 
+    margin: 0;
+    padding-left: 1em;
+  }
+
+  .stat-value {
+    font-weight: bolder;
+    font-size: 25px;
+    padding-right: 0.2em;
+    display: inline-block;
+    width: 5em;
+    text-align: right;
+  }
+}
+

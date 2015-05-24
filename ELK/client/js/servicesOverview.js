@@ -1,22 +1,39 @@
 var _ = require('underscore'),
     ES = require('./es');
 
+var ServiceStat = React.createClass({
+  render: function(){
+    return <li>
+      <span className="stat-value">
+        {this.props.value} 
+        {this.props.units}
+      </span>
+      <span className="stat-desc">
+        {this.props.desc}
+      </span>
+    </li>;
+  }
+});
+
 var ServiceOverview = React.createClass({
   render: function(){
     var summary = this.props.summary;
 
     var url = "listing.html?"+summary.service;
 
-    return <section class="service-summary">
+    var stats = _.map([
+      [summary.count,"traces"],
+      [""+Math.round(summary.mean)+"","mean response time", "ms"],
+      [""+Math.round(summary.percentile99)+"","99th percentile response time","ms"],
+    ], function( stat ){
+      return <ServiceStat value={stat[0]} desc={stat[1]} units={stat[2]}/>;
+    });
+
+    return <section className="service-summary">
       <h2><a href={url}>{summary.service}</a></h2> 
-      <dl>
-        <dt>Number of traces</dt>
-        <dd>{summary.count}</dd>
-        <dt>Mean response time</dt>
-        <dd>{Math.round(summary.mean)}ms</dd>
-        <dt>99th percentile response time</dt>
-        <dd>{Math.round(summary.percentile99)}ms</dd>
-      </dl>
+      <ul>
+        {stats}
+      </ul>
     </section>;
   }
 });
@@ -28,7 +45,6 @@ var AppComponent = React.createClass({
     });
     
     return <div>
-        <h1>Services Overview</h1>
         {serviceListings}
       </div>;
   }

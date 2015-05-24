@@ -11,7 +11,7 @@ function logError(err) {
 gulp.task('sass', function () {
   gulp.src('./sass/**/*.scss')
     .pipe(sass({
-      includePaths: require('node-bourbon').includePaths
+      includePaths: require('node-neat').includePaths
     }))
     .pipe(gulp.dest('./dist'));
 });

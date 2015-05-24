@@ -1,6 +1,17 @@
 @import "bourbon";
+@import "neat";
 
 @import "colors";
+@import "typography";
+@import "header";
+
+html,body {
+  margin: 0;
+}
+
+h1,h2,h3 {
+  margin: 0;
+}
 
 svg {
   font: 10px sans-serif;
