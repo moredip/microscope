@@ -5,7 +5,7 @@ var ServiceOverview = React.createClass({
   render: function(){
     var summary = this.props.summary;
 
-    var url = "index.html?"+summary.service;
+    var url = "listing.html?"+summary.service;
 
     return <section class="service-summary">
       <h2><a href={url}>{summary.service}</a></h2> 
