@@ -9,4 +9,6 @@
 
 - use elasticsearch npm module
 
-- show both latency and overhead
+- show both latency and overhead in trace call stack
+
+- basic throughput and response time charting (per service?)

@@ -15,7 +15,7 @@ var AppComponent = React.createClass({
     });
     
     return <div>
-        <h1>traces involving <em>{this.props.serviceName}</em></h1>
+        <h1><em>{this.props.serviceName}</em> spans</h1>
         <DurationHistogram onSelectionChanged={this.props.onHistogramSelectionChanged} width={500} height={200} data={this.props.histogram}/>
         <ul>{traces}</ul>
       </div>;
