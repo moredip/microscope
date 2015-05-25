@@ -1,6 +1,7 @@
 var _ = require('underscore'),
     ES = require('./es'),
-    DurationHistogram = require('./components/DurationHistogram');
+    DurationHistogram = require('./components/durationHistogram');
+    Breadcrumbs = require('./components/breadcrumbs');
 
 var AppComponent = React.createClass({
   render: function(){
@@ -13,12 +14,16 @@ var AppComponent = React.createClass({
           <span>[{millis}]</span>
         </li>;
     });
+
+    var breadcrumbs = <Breadcrumbs crumbs={[['services','index.html'],[this.props.serviceName]]}/>;
     
-    return <div>
-        <h1><em>{this.props.serviceName}</em> spans</h1>
+    return <section className="service-listing">
+        <h1 className="main">service detail</h1>
+        <h2>service call duration histogram for <span className="service-name">{this.props.serviceName}</span></h2>
         <DurationHistogram onSelectionChanged={this.props.onHistogramSelectionChanged} width={500} height={200} data={this.props.histogram}/>
-        <ul>{traces}</ul>
-      </div>;
+        <h2>traces involving <span className="service-name">{this.props.serviceName}</span></h2>
+        <ul className="service-traces">{traces}</ul>
+      </section>;
   }
 });
 

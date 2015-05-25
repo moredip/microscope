@@ -1,5 +1,6 @@
 var _ = require('underscore'),
-    ES = require('./es');
+    ES = require('./es'),
+    Breadcrumbs = require('./components/breadcrumbs');
 
 var ServiceStat = React.createClass({
   render: function(){
@@ -44,9 +45,10 @@ var AppComponent = React.createClass({
       return <ServiceOverview summary={serviceSummary}/>
     });
     
-    return <div>
+    return <section className="service-overview">
+        <h1 className="main">services overview</h1>
         {serviceListings}
-      </div>;
+      </section>;
   }
 });
 

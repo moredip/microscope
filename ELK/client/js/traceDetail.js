@@ -144,10 +144,13 @@ function renderTraceSpanTree(spans){
   var appContainer = document.getElementById('appContainer');
 
   function render(spans){
-    React.render(
-        <WaterfallChart eventBus={eventBus} spans={spans}/>,
-        appContainer
-    );
+    var appContent = 
+        <section className="trace-detail">
+          <h1 className="main">distributed call trace</h1>
+          <WaterfallChart eventBus={eventBus} spans={spans}/>
+        </section>;
+
+    React.render( appContent, appContainer );
   }
 
   eventBus.on('toggleSpanExpansion', function(spanId){

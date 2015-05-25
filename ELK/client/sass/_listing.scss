@@ -1,0 +1,17 @@
+.service-listing {
+  margin-left: $base-indent;
+  h2 {
+    margin-top: 1em;
+    font-weight: lighter;
+    .service-name {
+      font-weight: 900;
+      background: $c-yellow;
+    }
+  }
+}
+
+.service-traces {
+  li {
+    margin-bottom: 0.5em;
+  }
+}

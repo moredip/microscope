@@ -5,12 +5,31 @@
 @import "typography";
 @import "header";
 
+$base-indent: 1rem;
+
 html,body {
   margin: 0;
 }
 
 h1,h2,h3 {
   margin: 0;
+}
+
+ul {
+  list-style-type: none; 
+  padding-left: 0;
+}
+
+#appContainer {
+  @include outer-container;
+}
+
+
+h1.main {
+  font-size: 40px;
+  font-weight: 100;
+  border-bottom: 1px solid black;
+  margin-bottom: 1em;
 }
 
 svg {
