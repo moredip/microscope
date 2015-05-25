@@ -1,13 +1,11 @@
-@import "base";
-
-.bar {
-  fill: $c-teal;
-  stroke: darken($c-teal,5%);
-  opacity: .8;
-}
-
 .histogram {
   cursor: col-resize; 
+  
+  .bar {
+    fill: $c-teal;
+    stroke: darken($c-teal,5%);
+    opacity: .8;
+  }
 }
 
 .histogram-selection {
