@@ -5,6 +5,8 @@
 - timeline axis
 - animated expand/contract of subtrees
 
+- window.history for histogram selection
+
 - drill-down histograms
 
 - use elasticsearch npm module

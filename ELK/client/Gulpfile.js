@@ -3,13 +3,15 @@ var source = require('vinyl-source-stream');
 var browserify = require('browserify');
 var reactify = require('reactify');
 var sass = require('gulp-sass');
+var template = require('gulp-template');
+var rename = require('gulp-rename');
 
 function logError(err) {
   console.log(err.message)
 }
 
 gulp.task('sass', function () {
-  gulp.src('./sass/**/*.scss')
+  return gulp.src('./sass/**/*.scss')
     .pipe(sass({
       includePaths: require('node-neat').includePaths
     }))
@@ -27,14 +29,38 @@ gulp.task('js', function () {
     }).bundle()
       .on('error',logError)
       .pipe(source(entryFile))
-      .pipe(gulp.dest('dist'));
+      .pipe(gulp.dest('dist/js'));
   });
 });
 
-gulp.task('build',['js','sass']);
+function buildHtmlFile(htmlFile,jsFile){
+  return gulp.src('_layout.html')
+        .pipe(template({jsFile: jsFile}))
+        .pipe(rename(htmlFile+'.html'))
+        .pipe(gulp.dest('dist'));
+}
+
+gulp.task('html', function(){
+  buildHtmlFile('index','servicesOverview');
+  buildHtmlFile('listing','listing');
+  buildHtmlFile('trace','traceDetail');
+});
+
+gulp.task('copy', function(){
+  gulp.src('images/**/*')
+    .pipe(gulp.dest('dist/images'));
+
+  gulp.src(['js/d3.min.js','js/react-with-addons-0.13.3.js'])
+    .pipe(gulp.dest('dist/js'));
+});
+
+gulp.task('build',['copy','html','js','sass']);
+
 gulp.task('watch', ['build'], function() {
   gulp.watch('./js/**/*', ['js']);
   gulp.watch('./sass/**/*', ['sass']);
+  gulp.watch('./*.html', ['html']);
+  gulp.watch('./images/**/*', ['copy']);
 });
 
 
