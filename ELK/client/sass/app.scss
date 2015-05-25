@@ -1,7 +1,12 @@
 @import "base";
 
+// components
 @import "histogram";
-@import "service_summary";
-@import "listing";
 @import "waterfall";
 @import "breadcrumbs";
+
+// pages
+@import "service_summary";
+@import "listing";
+@import "trace_detail";
+

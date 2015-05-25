@@ -1,11 +1,10 @@
 @import "bourbon";
 @import "neat";
 
+@import "variables";
 @import "colors";
 @import "typography";
 @import "header";
-
-$base-indent: 1rem;
 
 html,body {
   margin: 0;
