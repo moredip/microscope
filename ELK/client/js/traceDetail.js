@@ -2,19 +2,8 @@ var _ = require('underscore'),
     EventEmitter = require('events').EventEmitter,
     cx = React.addons.classSet,
     ES = require('./es'),
+    Colors = require('./colors'),
     forWhere = require('./forWhere');
-
-// Stolen from http://bl.ocks.org/tgk/5744943
-function hashCode(str){
-    var hash = 0;
-    if (str.length == 0) return hash;
-    for (i = 0; i < str.length; i++) {
-        char = str.charCodeAt(i);
-        hash = ((hash<<5)-hash)+char;
-        hash = hash & hash; // Convert to 32bit integer
-    }
-    return hash;
-}
 
 function traversedSpans(rootSpan){
   var spans = [];
@@ -36,7 +25,7 @@ var WaterfallLine = React.createClass({
     this.props.eventBus.emit('spanUnhovered',this.props.spanId);
   },
   label: function(){
-    if( this.props.hasChildren ){
+    if( this.props.isLeaf ){
       prefix = "";
     }else if( this.props.expandChildren ){
       prefix = "[-] ";
@@ -47,14 +36,24 @@ var WaterfallLine = React.createClass({
   },
   render: function(){
     var props=this.props;
-    return <g transform={"translate("+props.x+","+props.y+")"}>
+    var color=Colors.blue.brighter(props.spanDepth/3);
+    var classes=cx({
+      'waterfall-line':true, 
+      highlighted:props.highlighted,
+      leaf:props.isLeaf
+    });
+    return <g 
+      transform={"translate("+props.x+","+props.y+")"}
+      className={classes}
+      onClick={this.handleClick}
+      onMouseEnter={this.handleEnter}
+      onMouseLeave={this.handleLeave}
+      >
           <rect 
-            onClick={this.handleClick}
-            onMouseEnter={this.handleEnter}
-            onMouseLeave={this.handleLeave}
             height={props.dy}
             width={props.dx}
-            className={cx({'waterfall-line':true, highlighted:props.highlighted})}
+            fill={color}
+            stroke={color.darker(1)}
           />
           <text y="4" x="6" dy={props.dy/2} textAnchor="left">{this.label()}</text>
     </g>
@@ -101,8 +100,9 @@ var WaterfallChart = React.createClass({
                 spanId={span.spanId}
                 name={span.name}
                 elapsedMillis={span.elapsedMillis}
+                spanDepth={span.depth}
                 expandChildren={span.expandChildren}
-                hasChildren={_.isEmpty(span.children)}
+                isLeaf={_.isEmpty(span.children)}
                 highlighted={span.highlighted}
 
                 dx={x(span.elapsedMillis)}

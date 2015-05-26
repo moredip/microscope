@@ -1,8 +1,10 @@
 .waterfall-line {
-  fill: $c-sea;
-  stroke: darken($c-sea,30%);
+  cursor: pointer;
 }
+.waterfall-line.leaf {
+  cursor: default;
+}
+
 .waterfall-line.highlighted {
-  fill: $c-blue;
-  stroke: darken($c-blue,20%);
+  stroke-width: 2px;
 }

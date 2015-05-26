@@ -1,7 +1,8 @@
-- deeper shades of a span color based on call stack depth
-- highlight both parents and children on hover
+- search bar
+
+- highlight both parents and subtree on hover
+- highlight subtree using a rect around entire subtree
 - better laid out label
-- can't highlight label
 - timeline axis
 - animated expand/contract of subtrees
 

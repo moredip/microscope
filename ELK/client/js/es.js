@@ -199,7 +199,7 @@ function decorateSpansWithParentChildLinks(spans){
 
 function decorateSpanTreeWithDepthInfo(rootSpan){
   function walk(span, currDepth){
-    span.rowIx = currDepth;
+    span.depth = currDepth;
     _.each( span.children, function(childSpan){
       walk(childSpan, currDepth + 1);
     });
