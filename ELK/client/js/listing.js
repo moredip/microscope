@@ -10,7 +10,7 @@ var AppComponent = React.createClass({
       var millis = ""+traceRoot.elapsedMillis+"ms";
       var timestamp = traceRoot['@timestamp'];
       var url = "trace.html?"+traceRoot.Correlation_ID;
-      return <li>
+      return <li key={traceRoot.spanId}>
           <a href={url}>{timestamp}</a>
           <span>[{millis}]</span>
         </li>;

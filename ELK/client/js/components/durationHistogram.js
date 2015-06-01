@@ -124,6 +124,7 @@ module.exports = React.createClass({
     var bars = _.map( props.data, function(count,bucket){
       return <g 
           className="bar" 
+          key={bucket}
           transform={translationTransform(scales.x(+bucket),scales.y(count))} 
           data-bucket={bucket} 
           data-count={count}
