@@ -145,9 +145,11 @@ function renderTraceSpanTree(spans){
   var appContainer = document.getElementById('appContainer');
 
   function render(spans){
+    var traceId = spans[0].Correlation_ID;
     var appContent = 
         <section className="trace-detail">
           <h1 className="main">distributed call trace</h1>
+          <p className="trace-id">trace/correlation ID: {traceId}</p>
           <WaterfallChart eventBus={eventBus} spans={spans}/>
         </section>;
 
