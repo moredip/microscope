@@ -4,6 +4,13 @@ function translationTransform(x,y){
   return "translate("+x+","+y+")";
 }
 
+
+// oh javascript
+function numericCompare(a,b){ return a-b; }
+function actuallySort(array){ 
+  return array.sort( numericCompare );
+}
+
 module.exports = React.createClass({
 
   getInitialState:function(){
@@ -106,7 +113,8 @@ module.exports = React.createClass({
 
     var selection = [];
     if( this.state.selectionStart && this.state.selectionEnd ){
-      var selectionRange = [this.state.selectionStart,this.state.selectionEnd].sort();
+      var selectionRange = actuallySort([this.state.selectionStart,this.state.selectionEnd]);
+
       selection = <rect x={selectionRange[0]}
           y={0}
           width={selectionRange[1]-selectionRange[0]}
