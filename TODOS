@@ -1,7 +1,7 @@
 - search bar
  - clear button in search bar 
 
-- fix selection bug in histogram
+- BUG: selection in histogram sometimes strange
 
 - highlight both parents and subtree on hover
 - highlight subtree using a rect around entire subtree

@@ -55,6 +55,9 @@ module.exports = React.createClass({
   componentDidMount: function(){
     this.generateXAxis();
   },
+  componentDidUpdate: function(){
+    this.generateXAxis();
+  },
 
   markerLocationFromMouseEvent: function(e){
     var chartLocation = this.getDOMNode().getBoundingClientRect();

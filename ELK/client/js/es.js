@@ -45,6 +45,10 @@ function performSearch(searchBody,noHits){
 
   return fetch(searchUrl,{
     method: 'post',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
     body: JSON.stringify(searchBody)
   }).then(function(r){ return r.json(); }); // TODO: handle errors
 }
@@ -132,7 +136,7 @@ function getAllTracesInvolvingService(params){
     }
   }
 
-  return performSearch(searchBody)
+  return performSearch(searchBody,false)
     .then(function(response){
       var spans = extractLogEntriesFromSearchResponse(response);
       var histogram = extractHistogramFromSearchResponse(response,"elapsedMillis");
