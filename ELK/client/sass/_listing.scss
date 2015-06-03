@@ -13,7 +13,32 @@
 }
 
 .service-traces {
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
   li {
     margin-bottom: 0.5em;
+    /*max-width: 34rem;*/
+    max-width: 700px;
+    background: transparentize($c-sea,0.8);
+    padding: 4px 10px;
+
+    position: relative;
   }
+
+  .duration-bar {
+    background: $c-sea;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: -1;
+  }
+
+  .trace-duration {
+    float: right;
+  }
+
 }

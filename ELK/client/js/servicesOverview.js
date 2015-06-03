@@ -1,5 +1,6 @@
 var _ = require('underscore'),
     ES = require('./es'),
+    createElements = require('./createElements'),
     Breadcrumbs = require('./components/breadcrumbs');
 
 var ServiceStat = React.createClass({
@@ -26,8 +27,8 @@ var ServiceOverview = React.createClass({
       [summary.count,"traces"],
       [""+Math.round(summary.mean)+"","mean response time", "ms"],
       [""+Math.round(summary.percentile99)+"","99th percentile response time","ms"],
-    ], function( stat ){
-      return <ServiceStat value={stat[0]} desc={stat[1]} units={stat[2]}/>;
+    ], function( stat, ix ){
+      return <ServiceStat key={ix} value={stat[0]} desc={stat[1]} units={stat[2]}/>;
     });
 
     return <section className="service-summary">
@@ -41,9 +42,7 @@ var ServiceOverview = React.createClass({
 
 var AppComponent = React.createClass({
   render: function(){
-    var serviceListings = _.map(this.props.servicesSummary,function(serviceSummary){
-      return <ServiceOverview summary={serviceSummary}/>
-    });
+    var serviceListings = createElements( ServiceOverview, this.props.servicesSummary, 'summary' );
     
     return <section className="service-overview">
         <h1 className="main">services overview</h1>

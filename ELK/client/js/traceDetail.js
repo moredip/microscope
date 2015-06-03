@@ -2,6 +2,7 @@ var _ = require('underscore'),
     EventEmitter = require('events').EventEmitter,
     cx = React.addons.classSet,
     ES = require('./es'),
+    createElements = require('./createElements'),
     Colors = require('./colors'),
     forWhere = require('./forWhere');
 

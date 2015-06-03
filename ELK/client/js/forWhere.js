@@ -1,6 +1,6 @@
 var _ = require('underscore');
 
-module.exports = function(collection,properties,operation){
+module.exports = function forWhere(collection,properties,operation){
   var subject = _.findWhere(collection,properties);
   if( typeof subject !== 'undefined' ){
     operation(subject);
