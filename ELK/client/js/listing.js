@@ -19,7 +19,7 @@ var AppComponent = React.createClass({
     var breadcrumbs = <Breadcrumbs crumbs={[['services','index.html'],[this.props.serviceName]]}/>;
     
     return <section className="service-listing">
-        <Header/>
+        <Header onFilterQuery={this.props.onFilterQuery}/>
         <h1 className="main">service detail</h1>
         <h2>service call duration histogram for <span className="service-name">{this.props.serviceName}</span></h2>
         <DurationHistogram onSelectionChanged={this.props.onHistogramSelectionChanged} width={500} height={200} data={this.props.histogram}/>
@@ -29,19 +29,40 @@ var AppComponent = React.createClass({
   }
 });
 
+function appController(serviceName){
+  var traceSearchParams = {
+    serviceName: serviceName,
+    elapsedMillisClip: false,
+    filterQuery: false
+  }
+
+  function handleHistogramSelectionChange(selectionRange){
+    traceSearchParams.elapsedMillisClip = selectionRange;
+    refresh();
+  }
+
+  function handleNewFilterQuery(newFilterQuery){
+    traceSearchParams.filterQuery = newFilterQuery;
+    refresh();
+  }
+
+  function refresh(){
+    ES.getAllTracesInvolvingService(traceSearchParams).then(function(result){
+      React.render(
+          <AppComponent 
+            onFilterQuery={handleNewFilterQuery}
+            onHistogramSelectionChanged={handleHistogramSelectionChange} 
+            serviceName={serviceName} 
+            traceRoots={result.spans} 
+            histogram={result.histogram}/>,
+          document.getElementById('appContainer')
+      );
+    });
+  }
+
+  refresh();
+}
+
 var serviceName = window.location.search.substr(1);
+appController(serviceName);
 
-function handleHistogramSelectionChange(selectionRange){
-  refresh(serviceName,selectionRange);
-}
-
-function refresh(serviceName,elapsedMillisClip){
-  ES.getAllTracesInvolvingService(serviceName,elapsedMillisClip).then(function(result){
-    React.render(
-        <AppComponent onHistogramSelectionChanged={handleHistogramSelectionChange} serviceName={serviceName} traceRoots={result.spans} histogram={result.histogram}/>,
-        document.getElementById('appContainer')
-    );
-  });
-}
-
-refresh(serviceName);

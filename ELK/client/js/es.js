@@ -80,7 +80,7 @@ function getServicesSummary(){
 }
 
 
-function getAllTracesInvolvingService(serviceName,elapsedMillisClip){
+function getAllTracesInvolvingService(params){
   var searchBody = {
     size: 500,
     query: { 
@@ -89,7 +89,7 @@ function getAllTracesInvolvingService(serviceName,elapsedMillisClip){
           bool: {
             must: [
               {
-                term: { "service.raw":serviceName }
+                term: { "service.raw":params.serviceName }
               },
               {
                 exists: {"field":"Correlation_ID"}
@@ -112,15 +112,24 @@ function getAllTracesInvolvingService(serviceName,elapsedMillisClip){
     }
   };
 
-  if( elapsedMillisClip ){
+  if( params.elapsedMillisClip ){
     searchBody.filter = {
       range: { 
         elapsedMillis: {
-          gte: elapsedMillisClip[0],
-          lte: elapsedMillisClip[1]
+          gte: params.elapsedMillisClip[0],
+          lte: params.elapsedMillisClip[1]
         }
       }
     };
+  }
+
+  if( params.filterQuery ){
+    searchBody.query.filtered.query = {
+      query_string: {
+        default_field: "message",
+        query: params.filterQuery
+      }
+    }
   }
 
   return performSearch(searchBody)

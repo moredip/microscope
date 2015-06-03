@@ -8,9 +8,7 @@ header {
   position: relative;
   z-index: 9999;
 
-  padding-left: $base-indent;
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding: 5px $base-indent;
 
   background-color: $c-sea;
   
@@ -47,10 +45,10 @@ footer {
     box-sizing: border-box;
     
     background-color: white;
-    border: 1px solid $base-border-color;
+    border: none;
+    outline: none;
     display: block;
     font-size: 1em;
-    font-style: italic;
     margin: 0;
     padding: ($base-spacing / 3) ($base-spacing / 3);
     position: relative;
@@ -61,8 +59,8 @@ footer {
   button {
     @include button(flat, $action-color);
     @include position(absolute, 0em 0em 0em null);
-    border-bottom-left-radius: 0;
-    border-top-left-radius: 0;
+
+    border-radius: 0;
     outline: none;
     padding: 5px 10px;
   }
