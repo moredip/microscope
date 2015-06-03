@@ -97,7 +97,7 @@ module.exports = React.createClass({
   handleMouseUp: function(e){
     if( this.state.selectionStart && this.state.selectionEnd ){
       var x = this.scales().xLinear;
-      var selectionInDomainScale = [x.invert(this.state.selectionStart),x.invert(this.state.selectionEnd)].sort();
+      var selectionInDomainScale = actuallySort([x.invert(this.state.selectionStart),x.invert(this.state.selectionEnd)]);
 
       if( _.isFunction(this.props.onSelectionChanged) ){
         this.props.onSelectionChanged(selectionInDomainScale);
