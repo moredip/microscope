@@ -1,7 +1,12 @@
 var _ = require('underscore'),
+    moment = require('moment'),
+    EventEmitter = require('events').EventEmitter,
     ES = require('./es'),
     createElements = require('./createElements'),
+    Furniture = require('./components/furniture'),
     Breadcrumbs = require('./components/breadcrumbs');
+
+require('twix');
 
 var ServiceStat = React.createClass({
   render: function(){
@@ -51,10 +56,35 @@ var AppComponent = React.createClass({
   }
 });
 
-ES.getServicesSummary().then(function(servicesSummary){
-  console.log( servicesSummary );
-  React.render(
-      <AppComponent servicesSummary={servicesSummary}/>,
-      document.getElementById('appContainer')
-  );
-});
+function timeRangeEndingNowWithDuration(duration){
+  var rangeEnd = moment(); // NOW
+  return duration.beforeMoment(rangeEnd);
+}
+
+function appController(){
+  var appContainer = document.getElementsByTagName('body')[0];
+  var eventBus = new EventEmitter();
+  var appState = {
+    timeRange: timeRangeEndingNowWithDuration(moment.duration({days:1}))
+  };
+
+  function refresh(){
+    console.log( "time range", appState.timeRange.start.format(), appState.timeRange.end.format() );
+    var app = <AppComponent servicesSummary={appState.servicesSummary}/>;
+    var furniture = <Furniture eventBus={eventBus} content={app} timeRange={appState.timeRange}/>;
+
+    React.render( furniture, appContainer );
+  }
+
+  eventBus.on('durationSelected', function(duration){
+    appState.timeRange = timeRangeEndingNowWithDuration(duration);
+    refresh();
+  });
+
+  ES.getServicesSummary().then( function(servicesSummary){
+    appState.servicesSummary = servicesSummary;
+    refresh();
+  });
+}
+
+appController();
