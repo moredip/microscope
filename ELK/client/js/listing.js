@@ -1,10 +1,14 @@
 var _ = require('underscore'),
     moment = require('moment'),
+    EventEmitter = require('events').EventEmitter,
     ES = require('./es'),
     createElements = require('./createElements'),
+    Furniture = require('./components/furniture'),
     DurationHistogram = require('./components/durationHistogram'),
     Breadcrumbs = require('./components/breadcrumbs'),
     Header = require('./components/header');
+
+require('twix');
 
 var TraceListing = React.createClass({
   render: function(){
@@ -62,7 +66,17 @@ var AppComponent = React.createClass({
   }
 });
 
+
+function timeRangeEndingNowWithDuration(duration){
+  var rangeEnd = moment(); // NOW
+  return duration.beforeMoment(rangeEnd);
+}
+
 function appController(serviceName){
+  var eventBus = new EventEmitter();
+  var appContainer = document.getElementsByTagName('body')[0];
+  var timeRange = timeRangeEndingNowWithDuration(moment.duration({days:1}));
+
   var traceSearchParams = {
     serviceName: serviceName,
     elapsedMillisClip: false,
@@ -81,16 +95,18 @@ function appController(serviceName){
 
   function refresh(){
     ES.getAllTracesInvolvingService(traceSearchParams).then(function(result){
-      React.render(
-          <AppComponent 
+
+      var app = <AppComponent 
             onFilterQuery={handleNewFilterQuery}
             onHistogramSelectionChanged={handleHistogramSelectionChange} 
             serviceName={serviceName} 
             elapsedMillisClip={traceSearchParams.elapsedMillisClip}
             traceRoots={result.spans} 
-            histogram={result.histogram}/>,
-          document.getElementById('appContainer')
-      );
+            histogram={result.histogram}/>;
+
+      var furniture = <Furniture eventBus={eventBus} content={app} timeRange={timeRange}/>;
+
+      React.render( furniture, appContainer );
     });
   }
 
