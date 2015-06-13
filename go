@@ -61,6 +61,10 @@ function provision_vagrant {
 
   cd $root_dir/infra
   vagrant up --no-provision && vagrant provision
+
+  echo 
+  echo "local instance is up and running:"
+  echo "open http://localhost:8081"
 }
 
 case "${1:-}" in 
