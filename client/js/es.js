@@ -37,7 +37,7 @@ function extractStatsFromSearchResponse(response){
 }
 
 function performSearch(searchBody,noHits){
-  var searchUrl = "http://localhost:8081/logstash-*/_search";
+  var searchUrl = "/logstash-*/_search";
 
   if( noHits ){
     searchUrl += "?search_type=count";

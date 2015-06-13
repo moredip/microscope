@@ -14,7 +14,14 @@ function check_for_aws_creds_in_env {
   fi
 }
 
+function ensure_client_built {
+  cd ${root_dir}/client
+  npm install
+  gulp build
+}
+
 function using_isolated_ansible {
+  cd ${root_dir}
   infra/local_scripts/ensure_ansible.sh
   set +u
   source infra/managed_tools/python_env/bin/activate
@@ -22,6 +29,7 @@ function using_isolated_ansible {
 }
 
 function using_isolated_terraform {
+  cd ${root_dir}
   infra/local_scripts/ensure_terraform.sh
   cd infra/managed_tools/terraform
 }
@@ -84,9 +92,11 @@ terraform)
   ;;
 aws_deploy)
   check_for_aws_creds_in_env
+  ensure_client_built
   run_ansible_against_ec2
   ;;
 local)
+  ensure_client_built
   provision_vagrant
   ;;
 *)
