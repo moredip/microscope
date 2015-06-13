@@ -1,0 +1,14 @@
+---
+- hosts: tag_Role_elasticsearch-node
+  sudo: true
+  roles:
+    - role: elasticsearch-node
+      hosts: "{{ groups['tag_Role_elasticsearch-node'] }}"
+      node_name: "{{ ansible_hostname }}"
+      install_marvel: false
+
+- hosts: tag_Role_elasticsearch-frontend
+  sudo: true
+  roles:
+    - role: elasticsearch-frontend
+      es_nodes: "{{ groups['tag_Role_elasticsearch-node'] }}"

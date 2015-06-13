@@ -1,4 +1,0 @@
----
-- apt: update_cache=yes cache_valid_time=3600
-- apt: name=openjdk-7-jre-headless state=present
-- apt: name=solr-tomcat state=present

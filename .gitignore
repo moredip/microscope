@@ -4,4 +4,9 @@ tmp/
 /sample-data/*
 Gemfile.lock
 
+terraform.tfvars
+terraform.tfstate
+terraform.tfstate.backup
+.aws_creds
+
 /ELK/infra/managed_tools
