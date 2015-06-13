@@ -1,0 +1,20 @@
+#!/bin/bash
+set -e -u
+
+root_dir="$( cd "$( dirname "$0" )" && pwd )"
+
+function using_isolated_ansible {
+  infra/local_scripts/ensure_ansible.sh
+  set +u
+  source infra/managed_tools/python_env/bin/activate
+  set -u
+}
+
+function provision_vagrant {
+  using_isolated_ansible
+
+  cd $root_dir/infra
+  vagrant up --no-provision && vagrant provision
+}
+
+provision_vagrant
