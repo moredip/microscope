@@ -1,7 +1,12 @@
 .vagrant/
 /.bundle/
-tmp/
-/sample-data/*
 Gemfile.lock
 
-/ELK/infra/managed_tools
+/sample-data/*
+
+terraform.tfvars
+terraform.tfstate
+terraform.tfstate.backup
+.aws_creds
+
+infra/managed_tools
