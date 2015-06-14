@@ -17,5 +17,3 @@
     creates: "/usr/share/elasticsearch/plugins/marvel"
 
 - service: name=elasticsearch state=started enabled=yes
-
-- include: microscope_client.yml

@@ -1,3 +1,0 @@
----
-- name: install microscope client as an Elasticsearch site plugin
-  copy: src=../../client/dist/ dest=/usr/share/elasticsearch/plugins/microscope/_site 
