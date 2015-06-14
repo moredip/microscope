@@ -6,7 +6,7 @@ var _ = require('underscore'),
     Furniture = require('./components/furniture'),
     DurationHistogram = require('./components/durationHistogram'),
     Breadcrumbs = require('./components/breadcrumbs'),
-    Header = require('./components/header');
+    FilterHeader = require('./components/filterHeader');
 
 require('twix');
 
@@ -56,7 +56,6 @@ var AppComponent = React.createClass({
     var breadcrumbs = <Breadcrumbs crumbs={[['services','index.html'],[this.props.serviceName]]}/>;
 
     return <section className="service-listing">
-        <Header onFilterQuery={this.props.onFilterQuery}/>
         <h1 className="main">service detail</h1>
         <h2>service call duration histogram for <span className="service-name">{this.props.serviceName}</span></h2>
         <DurationHistogram onSelectionChanged={this.props.onHistogramSelectionChanged} width={700} height={200} data={this.props.histogram}/>
@@ -88,16 +87,15 @@ function appController(serviceName){
     refresh();
   }
 
-  function handleNewFilterQuery(newFilterQuery){
-    traceSearchParams.filterQuery = newFilterQuery;
-    refresh();
-  }
+  //function handleNewFilterQuery(newFilterQuery){
+    //traceSearchParams.filterQuery = newFilterQuery;
+    //refresh();
+  //}
 
   function refresh(){
     ES.getAllTracesInvolvingService(traceSearchParams).then(function(result){
 
       var app = <AppComponent 
-            onFilterQuery={handleNewFilterQuery}
             onHistogramSelectionChanged={handleHistogramSelectionChange} 
             serviceName={serviceName} 
             elapsedMillisClip={traceSearchParams.elapsedMillisClip}
