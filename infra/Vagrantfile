@@ -20,7 +20,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     machine.vm.network "forwarded_port", guest: 9300, host: 9301
     
     machine.vm.provision :ansible do |ansible|
-      ansible.playbook = "infra/ansible/vagrant_elasticsearch_playbook.yml"
+      ansible.playbook = "ansible/vagrant_elasticsearch_playbook.yml"
     end
   end
 

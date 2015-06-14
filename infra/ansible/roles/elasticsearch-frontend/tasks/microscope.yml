@@ -1,0 +1,6 @@
+---
+
+- file: state=directory path={{ microscope_dir }}  owner=www-data group=www-data
+
+- name: upload microscope app into {{ microscope_dir }}
+  copy: src=../../client/dist/ dest={{ microscope_dir }}
