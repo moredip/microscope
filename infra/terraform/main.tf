@@ -61,7 +61,7 @@ resource "aws_instance" "elasticsearch-node" {
     tags { 
 				Role = "elasticsearch-node"
     }
-    count = 3
+    count = 2
 
     security_groups = ["${aws_security_group.allow_ssh.name}","${aws_security_group.internal_es_traffic.name}"]
 }
