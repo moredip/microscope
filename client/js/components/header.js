@@ -29,7 +29,7 @@ module.exports = React.createClass({
 
     var histoEl = undefined;
     if( this.state.histogramData ){
-        histoEl = <HeaderHistogram data={this.state.histogramData} onSelectionChanged={this.props.onHistogramSelectionChanged} width={700} height={80}/>
+        histoEl = <HeaderHistogram data={this.state.histogramData} timeRangeController={this.props.timeRangeController} width={700} height={80}/>
     }
 
     return <header>

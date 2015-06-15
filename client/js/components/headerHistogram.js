@@ -1,13 +1,37 @@
 var _ = require('underscore'),
     translationTransform = require('../helpers/translationTransform');
 
+var LastListItem = React.createClass({
+  handleClick: function(){
+    this.props.onClick(this.props.duration);
+  },
+  render: function(){
+    return <li onClick={this.handleClick}>{this.props.label}</li>;
+  }
+});
+
+var LastList = React.createClass({
+  render: function(){
+    return <div className="last-list">
+      <ul>
+        <LastListItem onClick={this.props.onDurationSelected} label={"last 1h"} duration={{hours:1}}/>
+        <LastListItem onClick={this.props.onDurationSelected} label={"last 2h"} duration={{hours:2}}/>
+        <LastListItem onClick={this.props.onDurationSelected} label={"last 12h"} duration={{hours:12}}/>
+      </ul>
+      <ul>
+        <LastListItem onClick={this.props.onDurationSelected} label={"last 7d"} duration={{days:7}}/>
+        <LastListItem onClick={this.props.onDurationSelected} label={"last 30d"} duration={{days:30}}/>
+        <LastListItem onClick={this.props.onDurationSelected} label={"last 6m"} duration={{months:6}}/>
+      </ul>
+    </div>;
+  }
+});
+
 module.exports = React.createClass({
   displayName: "HeaderHistogram",
 
   setupBrush: function(){
     var brush = d3.svg.brush().x( this.scales().xLinear );
-
-    brush.extent( _.keys(this.props.data.bins)[50],_.keys(this.props.data.bins)[150] );
 
     d3.select(this.getDOMNode())
       .select('.brush').call(brush)
@@ -65,32 +89,15 @@ module.exports = React.createClass({
     return {x:x,xLinear:xLinear,y:y};
   },
 
+  onLastDurationSelected: function(duration){
+    this.props.timeRangeController.resetTimeRange(duration);
+  },
+
   render: function(){
     var dims = this.dims();
     var props = this.props;
     var data = props.data;
     var scales = this.scales();
-
-    //var selection = [];
-    //if( this.state.selectionStart && this.state.selectionEnd ){
-      //var selectionRange = actuallySort([this.state.selectionStart,this.state.selectionEnd]);
-
-      //selection = <rect x={selectionRange[0]}
-          //y={0}
-          //width={selectionRange[1]-selectionRange[0]}
-          //height={dims.inner.height}
-          //className="histogram-selection"
-        ///>;
-    //}
-
-    //var marker = [];
-    //if( this.state.markerLocation ){
-      //marker = <line 
-        //className="histogram-marker"
-        //x1={this.state.markerLocation} x2={this.state.markerLocation}
-        //y1={0} y2={dims.inner.height}
-      ///>;
-    //}
 
     var bars = _.map( data.bins, function(count,timeBin){
       return <g 
@@ -121,16 +128,7 @@ module.exports = React.createClass({
         <g className="x axis" transform={translationTransform(0,dims.inner.height)}></g> 
         {bars}
       </svg>
-      <ul className="last-list">
-        <li>last 1h</li>
-        <li>last 12h</li>
-        <li>last 2d</li>
-      </ul>
-      <ul className="last-list">
-        <li>last 7d</li>
-        <li>last 30d</li>
-        <li>last 6m</li>
-      </ul>
+      <LastList onDurationSelected={this.onLastDurationSelected}/>
     </div>;
   }
 });

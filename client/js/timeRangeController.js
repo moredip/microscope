@@ -7,13 +7,22 @@ require('twix');
 module.exports = function createTimeRangeController(params){
   var eventEmitter = new EventEmitter();
 
-  function resetTimeRange(){
-    // last 7 days
-    var twixRange = moment.duration({days:30}).beforeMoment(moment());
+  function resetTimeRange(duration){
+    if( !duration ){
+      duration = {days:30};
+    }
+
+
+    var twixRange = moment.duration(duration).beforeMoment(moment());
     var resolution = "6h";
+    if( twixRange.length("weeks") > 4 ){
+      resolution = "24h";
+    }
+
+    console.log( 'new time range start', twixRange.start.toString() );
+    console.log( 'new time range end  ', twixRange.end.toString() );
 
     var range = [+twixRange.start,+twixRange.end];
-    console.log( 'resetting time range', range );
 
 
     es.getTraceCountHistogramOverTime(range,resolution).then( function(histoBins){

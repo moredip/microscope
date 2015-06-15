@@ -3,11 +3,12 @@
   margin-right: 10px;
   padding-bottom: 10px;
 
-  background-color: white;
+  background-color: lighten($c-sea,30%);
 
   h3 {
+    font-size: 12pt;
     font-weight: 100;
-    padding-left: 0.5em;
+    padding-left: 10px;
   }
 
   .histogram {
@@ -16,11 +17,17 @@
 
   .last-list {
     display: inline-block;
-    margin: 0;
     vertical-align: top;
+
+    ul {
+      display: inline-block;
+      margin: 0;
+    }
+
     li {
+      @include user-select(none);
       cursor: pointer;
-      border: 1px solid $c-blue;
+      border: 1px solid $c-sea;
       padding: 3px 6px;
       margin-bottom: 2px;
       margin-right: 2px;

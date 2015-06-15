@@ -165,6 +165,14 @@ function getTraceCountHistogramOverTime(timeRange,resolution){
               },
               {
                 exists: {"field":"spanId"}
+              },
+              {
+                range: {
+                    "time": {
+                        from: timeRange[0],
+                        to: timeRange[1]
+                    }
+                }
               }
             ]
           }
