@@ -13,6 +13,6 @@ cd dev-tooling/ELK_loaders
 
 Some useful links now that you have a running local setup:
 
-- use microscope to analyze your fake logs: http://localhost:8081/microscope
-- use Kibana to view the raw logs: http://localhost:8081/kibana
-- use Kopf to view the state of your Elasticsearch cluster: http://localhost:8081/admin
+- use microscope to analyze your fake logs: [http://localhost:8081/microscope/](http://localhost:8081/microscope/)
+- use Kibana to view the raw logs: [http://localhost:8081/kibana/](http://localhost:8081/kibana/index.html#/dashboard/file/logstash.json)
+- use Kopf to view the state of your Elasticsearch cluster: [http://localhost:8081/admin/](http://localhost:8081/admin/)
