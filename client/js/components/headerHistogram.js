@@ -30,8 +30,18 @@ var LastList = React.createClass({
 module.exports = React.createClass({
   displayName: "HeaderHistogram",
 
+  handleBrushEnd: function(b){
+    this.props.timeRangeController.setTimeRange(b.extent());
+  },
+
   setupBrush: function(){
+    var that = this;
+
     var brush = d3.svg.brush().x( this.scales().xLinear );
+    
+    brush.on( 'brushend', function(){
+      that.handleBrushEnd(brush);
+    });
 
     d3.select(this.getDOMNode())
       .select('.brush').call(brush)
