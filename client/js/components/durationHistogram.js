@@ -1,15 +1,6 @@
-var _ = require('underscore');
-
-function translationTransform(x,y){
-  return "translate("+x+","+y+")";
-}
-
-
-// oh javascript
-function numericCompare(a,b){ return a-b; }
-function actuallySort(array){ 
-  return array.sort( numericCompare );
-}
+var _ = require('underscore'),
+    actuallySort = require('../helpers/actuallySort'),
+    translationTransform = require('../helpers/translationTransform');
 
 module.exports = React.createClass({
 

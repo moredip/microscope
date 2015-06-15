@@ -1,15 +1,12 @@
-var TimeScrubber = require('./TimeScrubber');
+var Header = require('./header'),
+    createTimeRangeController = require('../timeRangeController');
 
 module.exports = React.createClass({
   render: function(){
+    var timeRangeController = createTimeRangeController();
+
     return <main>
-      <header>
-        <a href="index.html">
-          <img className="logo" src="images/microscope-logo.svg" alt="microscope logo"/>
-        </a>
-        <h1>MicroScope</h1>
-        <TimeScrubber eventBus={this.props.eventBus} timeRange={this.props.timeRange}/>
-      </header>
+      <Header timeRangeController={timeRangeController} eventBus={this.props.eventBus} timeRange={this.props.timeRange}/>
       {this.props.content}
       <footer>
         <div className="credits">

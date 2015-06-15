@@ -6,6 +6,7 @@ module.exports = {
   getAllTracesInvolvingService: getAllTracesInvolvingService,
   getConstructedTrace: getConstructedTrace,
   getServicesSummary:getServicesSummary,
+  getTraceCountHistogramOverTime:getTraceCountHistogramOverTime,
   findRootSpan: findRootSpan,
   visitSpanTreeDepthFirstPreOrder: visitSpanTreeDepthFirstPreOrder
 };
@@ -88,7 +89,6 @@ function getServicesSummary(){
     });
 }
 
-
 function getAllTracesInvolvingService(params){
   var searchBody = {
     size: 500,
@@ -149,6 +149,46 @@ function getAllTracesInvolvingService(params){
         spans:spans,
         histogram:histogram
       };
+    });
+}
+
+function getTraceCountHistogramOverTime(timeRange,resolution){
+  // TODO: use timeRange to filter
+  var searchBody = {
+    query: { 
+      filtered: {
+        filter: {
+          bool: {
+            must: [
+              {
+                exists: {"field":"Correlation_ID"}
+              },
+              {
+                exists: {"field":"spanId"}
+              }
+            ]
+          }
+        }
+      }
+    },
+    aggs: { 
+      tracesOverTime: {
+        date_histogram: {
+          field: "time",
+          interval: resolution,
+          min_doc_count: 0,
+          extended_bounds: {
+            min: timeRange[0],
+            max: timeRange[1]
+          }
+        }
+      }
+    }
+  };
+
+  return performSearch(searchBody,true)
+    .then(function(response){
+      return extractHistogramFromSearchResponse(response,"tracesOverTime");
     });
 }
 
