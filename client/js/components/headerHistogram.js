@@ -28,6 +28,18 @@ var LastList = React.createClass({
   }
 });
 
+function humanDescriptionForResolution(resolution){
+  if( resolution.minutes() > 0 ){
+    return resolution.humanize();
+  }else if( resolution.seconds() > 0 ){
+    let secs = Math.round(resolution.asSeconds());
+    return `${secs} seconds`;
+  }else{
+    let millis = Math.round(resolution.asMilliseconds());
+    return `${millis} milliseconds`;
+  }
+}
+
 module.exports = React.createClass({
   displayName: "HeaderHistogram",
 
@@ -133,9 +145,11 @@ module.exports = React.createClass({
       });
     }
 
+    let title = `trace count over time (${data.totalCount} traces total, each bar spans ${humanDescriptionForResolution(data.resolution)})`;
+
     // x axis and brush elements are filled out by componentDid[Mount|Update]
     return <div className="header-histogram-container">
-      <h3>trace count over time</h3>
+      <h3>{title}</h3>
       <svg 
         className="histogram"
         width={dims.full.width} 

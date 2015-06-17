@@ -24,6 +24,10 @@ function extractHistogramFromSearchResponse(response,aggName){
   return buckets;
 }
 
+function extractTotalHitsFromSearchResponse(response){
+  return response.hits.total;
+}
+
 function extractStatsFromSearchResponse(response){
   var buckets = {};
   _.each( response.aggregations.service.buckets, function(bucket){
@@ -194,7 +198,9 @@ function getTraceCountHistogramOverTime(timeRange,resolution){
 
   return performSearch(searchBody,true)
     .then(function(response){
-      return extractHistogramFromSearchResponse(response,"tracesOverTime");
+      let histogram = extractHistogramFromSearchResponse(response,"tracesOverTime");
+      let totalCount = extractTotalHitsFromSearchResponse(response);
+      return {histogram,totalCount};
     });
 }
 

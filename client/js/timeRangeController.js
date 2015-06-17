@@ -34,11 +34,12 @@ module.exports = function createTimeRangeController(params){
 
     var range = [+twixRange.start,+twixRange.end];
 
-    es.getTraceCountHistogramOverTime(range,resolution).then( function(histoBins){
+    es.getTraceCountHistogramOverTime(range,resolution).then( function({histogram,totalCount}){
       var payload = {
-        range: range,
-        resolution: resolution,
-        bins:histoBins
+        range,
+        resolution,
+        totalCount,
+        bins:histogram
       }
       eventEmitter.emit('histoChange',payload);
     });
