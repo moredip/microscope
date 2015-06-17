@@ -16,13 +16,24 @@ header {
 
   h1 {
     display: inline-block;
-    font-weight: lighter;
-    font-size: 20px;
-    padding-top: 5px;
+    font-weight: 100;
+    font-size: 28px;
   }
 
   .masthead {
-    margin-bottom: 0.8em;
+    display: inline-block;
+  }
+  .time-range {
+    float: right;
+    padding-top: 13px;
+
+    font-size: 20px;
+    .label {
+      font-weight: 800;
+    }
+    .val {
+      font-weight: 100;
+    }
   }
 }
 
