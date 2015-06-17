@@ -62,9 +62,5 @@ module.exports = function createTimeRangeController(params){
     eventEmitter.on('histoChange',handler);
   }
 
-  return {
-    resetTimeRange:resetTimeRange,
-    setTimeRange:setTimeRange,
-    onHistoChange:onHistoChange
-  };
+  return { resetTimeRange, setTimeRange, onHistoChange };
 };

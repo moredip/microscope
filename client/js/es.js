@@ -3,12 +3,12 @@ require("whatwg-fetch"); // installed as a global
 var _ = require('underscore');
 
 module.exports = {
-  getAllTracesInvolvingService: getAllTracesInvolvingService,
-  getConstructedTrace: getConstructedTrace,
-  getServicesSummary:getServicesSummary,
-  getTraceCountHistogramOverTime:getTraceCountHistogramOverTime,
-  findRootSpan: findRootSpan,
-  visitSpanTreeDepthFirstPreOrder: visitSpanTreeDepthFirstPreOrder
+  getAllTracesInvolvingService,
+  getConstructedTrace,
+  getServicesSummary,
+  getTraceCountHistogramOverTime,
+  findRootSpan,
+  visitSpanTreeDepthFirstPreOrder
 };
 
 
@@ -91,7 +91,7 @@ function getServicesSummary(){
     });
 }
 
-function getAllTracesInvolvingService(params){
+function getAllTracesInvolvingService({serviceName,elapsedMillisClip=false,filterQuery=false}){
   var searchBody = {
     size: 500,
     query: { 
@@ -100,7 +100,7 @@ function getAllTracesInvolvingService(params){
           bool: {
             must: [
               {
-                term: { "service.raw":params.serviceName }
+                term: { "service.raw":serviceName }
               },
               {
                 exists: {"field":"Correlation_ID"}
@@ -123,22 +123,22 @@ function getAllTracesInvolvingService(params){
     }
   };
 
-  if( params.elapsedMillisClip ){
+  if( elapsedMillisClip ){
     searchBody.filter = {
       range: { 
         elapsedMillis: {
-          gte: params.elapsedMillisClip[0],
-          lte: params.elapsedMillisClip[1]
+          gte: elapsedMillisClip[0],
+          lte: elapsedMillisClip[1]
         }
       }
     };
   }
 
-  if( params.filterQuery ){
+  if( filterQuery ){
     searchBody.query.filtered.query = {
       query_string: {
         default_field: "message",
-        query: params.filterQuery
+        query: filterQuery
       }
     }
   }
@@ -147,10 +147,7 @@ function getAllTracesInvolvingService(params){
     .then(function(response){
       var spans = extractLogEntriesFromSearchResponse(response);
       var histogram = extractHistogramFromSearchResponse(response,"elapsedMillis");
-      return {
-        spans:spans,
-        histogram:histogram
-      };
+      return { spans, histogram };
     });
 }
 
