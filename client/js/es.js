@@ -49,6 +49,8 @@ function performSearch(searchBody,noHits){
     searchUrl += "?search_type=count";
   }
 
+  console.log( 'posting to ES', searchUrl, searchBody );
+
   return fetch(searchUrl,{
     method: 'post',
     headers: {
