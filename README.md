@@ -4,3 +4,15 @@ To play with microscope you can stand up a local vagrant-based ELK setup by runn
 ```
 ./go local
 ```
+
+You can use some scripts to create some fake log entries in your vagrant setup:
+```
+cd dev-tooling/ELK_loaders
+../generate_fake_call_tree 1000 | ./load_faked_call_trace_into_ElK.sh
+```
+
+Some useful links now that you have a running local setup:
+
+- use microscope to analyze your fake logs: http://localhost:8081/microscope
+- use Kibana to view the raw logs: http://localhost:8081/kibana
+- use Kopf to view the state of your Elasticsearch cluster: http://localhost:8081/admin
