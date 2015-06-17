@@ -1,7 +1,6 @@
 var gulp = require('gulp');
 var source = require('vinyl-source-stream');
 var browserify = require('browserify');
-var reactify = require('reactify');
 var sass = require('gulp-sass');
 var template = require('gulp-template');
 var rename = require('gulp-rename');
@@ -24,7 +23,7 @@ gulp.task('js', function () {
   ["servicesOverview.js","traceDetail.js","listing.js"].forEach( function(entryFile){
     browserify({
       entries: ['./js/'+entryFile],
-      transform: [reactify,babelify],
+      transform: [babelify],
       debug: true,
       cache: {}, packageCache: {}, fullPaths: true
     }).bundle()
