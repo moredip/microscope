@@ -23,6 +23,7 @@ header {
   .masthead {
     display: inline-block;
   }
+
   .time-range {
     float: right;
     padding-top: 13px;
@@ -34,6 +35,13 @@ header {
     .val {
       font-weight: 100;
     }
+  }
+
+  .header-histogram-container {
+    display: none;
+  }
+  &:hover .header-histogram-container {
+    display: block;
   }
 }
 

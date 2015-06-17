@@ -10,7 +10,8 @@ module.exports = React.createClass({
 
   getInitialState: function(){
     return { 
-      timeRange: false
+      timeRange: false,
+      hovered: false
     };
   },
 
