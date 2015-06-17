@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "babelify": "^6.1.2",
     "browserify": "~10.2.0",
     "gulp": "~3.8.11",
     "gulp-react": "~3.0.1",
