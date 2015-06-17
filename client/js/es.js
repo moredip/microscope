@@ -153,7 +153,6 @@ function getAllTracesInvolvingService(params){
 }
 
 function getTraceCountHistogramOverTime(timeRange,resolution){
-  // TODO: use timeRange to filter
   var searchBody = {
     query: { 
       filtered: {
@@ -183,7 +182,7 @@ function getTraceCountHistogramOverTime(timeRange,resolution){
       tracesOverTime: {
         date_histogram: {
           field: "time",
-          interval: resolution,
+          interval: resolution.asInterval(),
           min_doc_count: 0,
           extended_bounds: {
             min: timeRange[0],

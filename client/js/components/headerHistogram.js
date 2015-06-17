@@ -1,4 +1,5 @@
 var _ = require('underscore'),
+    moment = require('moment'),
     translationTransform = require('../helpers/translationTransform');
 
 var LastListItem = React.createClass({
@@ -37,7 +38,7 @@ module.exports = React.createClass({
   setupBrush: function(){
     var that = this;
 
-    var brush = d3.svg.brush().x( this.scales().xLinear );
+    var brush = d3.svg.brush().x( this.scales().x );
     
     brush.on( 'brushend', function(){
       that.handleBrushEnd(brush);
@@ -50,7 +51,7 @@ module.exports = React.createClass({
 
   setupAxes: function(){
     var xAxis = d3.svg.axis()
-      .scale(this.scales().xLinear)
+      .scale(this.scales().x)
       //.ticks(10)
       .orient("bottom");
 
@@ -84,11 +85,7 @@ module.exports = React.createClass({
     var timeBins = _.map(_.keys(props.data.bins),parseFloat);
     var timeRange = [ _.min(timeBins), _.max(timeBins) ];
 
-    var x = d3.scale.ordinal()
-      .domain(timeBins)
-      .rangeRoundBands([dims.margin.left, dims.inner.width]);
-
-    var xLinear = d3.time.scale()
+    var x = d3.time.scale()
       .domain(timeRange)
       .range([dims.margin.left, dims.inner.width]);
 
@@ -96,7 +93,7 @@ module.exports = React.createClass({
       .domain([0, _.max(props.data.bins)])
         .range([dims.inner.height,dims.margin.top]);
 
-    return {x:x,xLinear:xLinear,y:y};
+    return {x:x,y:y};
   },
 
   onLastDurationSelected: function(duration){
@@ -109,22 +106,32 @@ module.exports = React.createClass({
     var data = props.data;
     var scales = this.scales();
 
-    var bars = _.map( data.bins, function(count,timeBin){
-      return <g 
-          className="bar" 
-          key={timeBin}
-          transform={translationTransform(scales.x(timeBin),scales.y(count))} 
-          data-time={timeBin} 
-          data-count={count}
-        >
-          <rect 
-            x="1" 
-            width={scales.x.rangeBand()} 
-            height={dims.inner.height-scales.y(count)}
+    var barPadding = 2; //pixels
+
+    var bars = undefined;
+    if( !_.isEmpty(data.bins) ){
+      // gross
+      var sampleBinTime = moment( new Date(+_.keys(data.bins)[0]) );
+      var nextBinTime = sampleBinTime.clone(); nextBinTime.add(data.resolution);
+      var barWidth = scales.x(nextBinTime) - scales.x(sampleBinTime) - barPadding;
+
+      var bars = _.map( data.bins, function(count,timeBin){
+        return <g 
+            className="bar" 
+            key={timeBin}
+            transform={translationTransform(scales.x(timeBin),scales.y(count))} 
+            data-time={timeBin} 
+            data-count={count}
           >
-         </rect>
-      </g>;
-    });
+            <rect 
+              x="1" 
+              width={barWidth} 
+              height={dims.inner.height-scales.y(count)}
+            >
+           </rect>
+        </g>;
+      });
+    }
 
     // x axis and brush elements are filled out by componentDid[Mount|Update]
     return <div className="header-histogram-container">

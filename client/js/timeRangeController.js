@@ -10,7 +10,12 @@ module.exports = function createTimeRangeController(params){
   function histogramResolutionForRange(twixRange){
     var approxNumberOfBins = 200;
     var resolution = twixRange.length("minutes") / approxNumberOfBins;
-    return ""+Math.round(resolution)+"m";
+    var duration = moment.duration({minutes:resolution});
+    
+    // ack, this sucks, but can't think of a better way to get the ES API something it can use
+    duration.asInterval = function(){ return ""+resolution+"m"; } 
+
+    return duration
   }
 
   function setTwixTimeRange(twixRange){
