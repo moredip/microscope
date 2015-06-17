@@ -20,6 +20,13 @@ function ensure_client_built {
   gulp build
 }
 
+function watch_client {
+  cd ${root_dir}/client
+  npm install
+  (sleep 5 && open ./dist/index.html)&
+  gulp watch
+}
+
 function using_isolated_ansible {
   cd ${root_dir}
   infra/local_scripts/ensure_ansible.sh
@@ -78,7 +85,7 @@ function provision_vagrant {
 case "${1:-}" in 
 
 '')
-  echo -e "valid commands are:\n\tlocal\n\taws_provision\n\taws_deploy\n\taws_teardown\n\tterraform"
+  echo -e "valid commands are:\n\tlocal\n\twatch-client\n\taws_provision\n\taws_deploy\n\taws_teardown\n\tterraform"
   ;;
 aws_provision)
   run_terraform apply
@@ -98,6 +105,9 @@ aws_deploy)
 local)
   ensure_client_built
   provision_vagrant
+  ;;
+watch-client)
+  watch_client
   ;;
 *)
   echo 'unrecognized command'
