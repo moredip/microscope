@@ -5,6 +5,7 @@ var reactify = require('reactify');
 var sass = require('gulp-sass');
 var template = require('gulp-template');
 var rename = require('gulp-rename');
+var babelify = require('babelify');
 
 function logError(err) {
   console.log(err.message)
@@ -23,7 +24,7 @@ gulp.task('js', function () {
   ["servicesOverview.js","traceDetail.js","listing.js"].forEach( function(entryFile){
     browserify({
       entries: ['./js/'+entryFile],
-      transform: [reactify],
+      transform: [reactify,babelify],
       debug: true,
       cache: {}, packageCache: {}, fullPaths: true
     }).bundle()
