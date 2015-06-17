@@ -38,6 +38,11 @@ function extractStatsFromSearchResponse(response){
 
 function performSearch(searchBody,noHits){
   var searchUrl = "/logstash-*/_search";
+ 
+  // hack for easier local dev
+  if( window.location.protocol === "file:" ){
+    searchUrl = "http://localhost:8081"+searchUrl;
+  }
 
   if( noHits ){
     searchUrl += "?search_type=count";
