@@ -26,7 +26,7 @@ header {
 
   .time-range {
     float: right;
-    padding-top: 13px;
+    padding-top: 4px;
 
     font-size: 20px;
     .label {
@@ -35,8 +35,29 @@ header {
     .val {
       font-weight: 100;
     }
+
+
+    &:after {
+      content: "\25BE";
+      padding-left: 0.5em;
+    }
   }
 
+  .time-range {
+    padding-top: 4px;
+    transition: padding-top 0.15s ease-out;
+  }
+
+  &:hover .time-range {
+    padding-top: 13px;
+    transition: padding-top 0.15s ease-in;
+
+    &:after {
+      content: "";
+    }
+  }
+
+  // TODO: animate it in
   .header-histogram-container {
     display: none;
   }
