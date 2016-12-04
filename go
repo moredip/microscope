@@ -17,7 +17,7 @@ function check_for_aws_creds_in_env {
 function ensure_client_built {
   cd ${root_dir}/client
   npm install
-  gulp build
+  $(npm bin)/gulp build
 }
 
 function using_isolated_ansible {
