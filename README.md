@@ -8,6 +8,7 @@ To play with microscope you can stand up a local vagrant-based ELK setup by runn
 You can use some scripts to create some fake log entries in your vagrant setup:
 ```
 cd dev-tooling/ELK_loaders
+./download_logstash_locally.sh
 ../generate_fake_call_tree 1000 | ./load_faked_call_trace_into_ElK.sh
 ```
 
